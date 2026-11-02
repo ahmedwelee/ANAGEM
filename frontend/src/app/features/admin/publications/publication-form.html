@@ -1,0 +1,85 @@
+<app-page-header [title]="isNew ? 'publications.new' : 'publications.edit'" [subtitle]="isNew ? 'publications.newHint' : null">
+  <a routerLink="/admin/publications" class="btn btn-ghost"><app-icon name="chevron-left" class="rtl:-scale-x-100" />{{ 'common.back' | transloco }}</a>
+  @if (!isNew && auth.can('CONTENT_DELETE')) { <button type="button" class="btn btn-danger-ghost" (click)="remove()"><app-icon name="trash-2" />{{ 'common.delete' | transloco }}</button> }
+  <button type="button" class="btn btn-primary" [disabled]="saving() || loading()" (click)="save()"><app-icon [name]="saving() ? 'loader-circle' : 'save'" [class.animate-spin]="saving()" />{{ 'common.save' | transloco }}</button>
+</app-page-header>
+
+<app-api-error-banner [error]="error()" />
+
+@if (loadError(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (loading()) {
+  <div class="grid gap-6 xl:grid-cols-[1fr_22rem]"><div class="skeleton h-[28rem] rounded-card"></div><div class="skeleton h-80 rounded-card"></div></div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" class="grid items-start gap-6 xl:grid-cols-[1fr_22rem]" novalidate>
+    <div class="space-y-6">
+    <div class="card card-pad">
+      <h2 class="section-title mb-4">{{ 'publications.mediaTitle' | transloco }}</h2>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div><span class="label">{{ 'publications.cover' | transloco }}</span><p class="hint mb-3">{{ 'publications.coverHint' | transloco }}</p><app-media-field formControlName="coverImage" kind="IMAGE" variant="portrait" /></div>
+        <div><span class="label">{{ 'publications.pdf' | transloco }}</span><p class="hint mb-3">{{ 'publications.pdfHint' | transloco }}</p><app-media-field formControlName="pdfFile" kind="PDF" /></div>
+      </div>
+    </div>
+    <div class="card">
+      <app-lang-tabs [(active)]="activeLang" [filled]="filled()" [status]="entity()?.translationStatus ?? null" />
+      <div formGroupName="translations" class="p-5">
+        @for (l of langs; track l) {
+          <div [formGroupName]="l" [hidden]="activeLang() !== l" role="tabpanel" class="space-y-5">
+            <div>
+              <label class="label" [attr.for]="'title-' + l">{{ 'publications.fieldTitle' | transloco }}</label>
+              <input class="input text-lg font-semibold" [id]="'title-' + l" formControlName="title" [attr.dir]="dirOf(l)" [attr.lang]="l" maxlength="300" />
+              <app-field-error [control]="tr(l)" />
+            </div>
+            <div>
+              <span class="label">{{ 'publications.fieldDescription' | transloco }}</span>
+              <app-rich-text-editor formControlName="description" [dir]="dirOf(l)" [lang]="l" [placeholder]="'publications.descriptionPlaceholder' | transloco" />
+            </div>
+          </div>
+        }
+        <app-field-error [control]="form.controls.translations" />
+      </div>
+    </div>
+    </div>
+
+    <aside class="space-y-6">
+      @if (entity(); as e) {
+        <app-status-actions [status]="e.status" [publishedAt]="e.publishedAt" [busy]="statusBusy() || saving()" (change)="changeStatus($event)" />
+      } @else {
+        <div class="card card-pad flex gap-3 text-sm text-muted"><app-icon name="info" class="mt-0.5 text-lg text-primary" /><p>{{ 'workflow.saveFirst' | transloco }}</p></div>
+      }
+      <div class="card card-pad space-y-4">
+        <h2 class="section-title">{{ 'publications.settings' | transloco }}</h2>
+        <div>
+          <label class="label" for="kind">{{ 'common.kind' | transloco }}</label>
+          <select id="kind" class="input" formControlName="kind">@for (k of kinds; track k) { <option [value]="k">{{ 'kind.' + k | transloco }}</option> }</select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="label" for="year">{{ 'common.year' | transloco }}</label>
+            <input id="year" type="number" class="input" formControlName="year" min="1900" max="2100" />
+            <app-field-error [control]="form.controls.year" />
+          </div>
+          <div>
+            <label class="label" for="issue">{{ 'publications.issueNumber' | transloco }}</label>
+            <input id="issue" class="input" formControlName="issueNumber" maxlength="30" />
+          </div>
+        </div>
+        <div>
+          <label class="label" for="category">{{ 'common.category' | transloco }}</label>
+          <select id="category" class="input" formControlName="categoryId">
+            <option [ngValue]="null">{{ 'common.noCategory' | transloco }}</option>
+            @for (c of categories(); track c.id) { <option [ngValue]="c.id">{{ catName(c) }}</option> }
+          </select>
+        </div>
+        <label class="flex items-start gap-3 text-sm"><input type="checkbox" class="check mt-0.5" formControlName="featured" /><span><span class="font-semibold">{{ 'common.featured' | transloco }}</span><span class="block text-xs text-muted">{{ 'publications.featuredHint' | transloco }}</span></span></label>
+      </div>
+      @if (entity(); as e) {
+        <div class="card card-pad space-y-1.5 text-xs text-muted">
+          <p><span class="font-semibold text-ink">{{ 'common.created' | transloco }}:</span> {{ e.createdAt | appDate: 'datetime' }}</p>
+          <p><span class="font-semibold text-ink">{{ 'common.updated' | transloco }}:</span> {{ e.updatedAt | appDate: 'datetime' }}</p>
+          @if (e.authorName) { <p><span class="font-semibold text-ink">{{ 'common.author' | transloco }}:</span> {{ e.authorName }}</p> }
+        </div>
+      }
+    </aside>
+  </form>
+}

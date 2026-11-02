@@ -1,0 +1,707 @@
+{
+ "fr": {
+  "partners": {
+   "title": "Partenaires",
+   "subtitle": "Organisations affichées dans la section « Nos partenaires » du site.",
+   "new": "Nouveau partenaire",
+   "edit": "Modifier le partenaire",
+   "empty": "Aucun partenaire",
+   "emptyHint": "Ajoutez les institutions partenaires de l'association.",
+   "logo": "Logo",
+   "website": "Site web",
+   "names": "Nom par langue",
+   "namesHint": "Facultatif. Si une langue est vide, le nom principal est utilisé."
+  },
+  "homepage": {
+   "title": "Page d'accueil",
+   "subtitle": "Modifiez les textes, images et blocs de la page d'accueil sans toucher au code.",
+   "unsaved": "Non enregistré",
+   "visible": "Visible",
+   "reset": "Annuler les modifications",
+   "addItem": "Ajouter un élément",
+   "noItems": "Aucun élément.",
+   "moveUp": "Monter",
+   "moveDown": "Descendre",
+   "sections": {
+    "HERO": {
+     "name": "Bandeau d'accueil",
+     "hint": "Titre, description, boutons et images de la page d'accueil."
+    },
+    "QUICK_ACCESS": {
+     "name": "Accès rapide",
+     "hint": "Les six cartes de raccourcis sous le bandeau."
+    },
+    "THEMATIC_AREAS": {
+     "name": "Axes thématiques",
+     "hint": "Domaines scientifiques présentés à côté du colloque à la une."
+    },
+    "MEMBERSHIP_CARDS": {
+     "name": "Cartes association et adhésion",
+     "hint": "À propos, adhésion et espace membres."
+    },
+    "FEATURED_EVENT": {
+     "name": "Événement à la une",
+     "hint": "Automatique (prochain événement à la une) ou épinglé par identifiant."
+    },
+    "MAGAZINE": {
+     "name": "Revue",
+     "hint": "Numéro de la revue mis en avant."
+    },
+    "PARTNERS": {
+     "name": "Partenaires",
+     "hint": "Titre de la section partenaires."
+    },
+    "FOOTER": {
+     "name": "Pied de page",
+     "hint": "Slogan et mention de droits."
+    }
+   },
+   "fields": {
+    "title": "Titre",
+    "description": "Description",
+    "primaryCta": "Bouton principal",
+    "secondaryCta": "Bouton secondaire",
+    "sideText": "Texte du panneau latéral",
+    "primaryUrl": "Lien du bouton principal",
+    "secondaryUrl": "Lien du bouton secondaire",
+    "heroImageMediaId": "Image du bandeau",
+    "sideImageMediaId": "Image du panneau latéral",
+    "items": "Éléments",
+    "key": "Identifiant",
+    "icon": "Icône",
+    "url": "Lien",
+    "text": "Texte",
+    "cta": "Bouton",
+    "mode": "Mode",
+    "eventId": "Identifiant de l'événement",
+    "publicationId": "Identifiant de la publication",
+    "kicker": "Sur-titre",
+    "tagline": "Slogan",
+    "rights": "Mention de droits",
+    "common": "Réglages communs",
+    "content": "Contenu"
+   },
+   "hints": {
+    "mode": "AUTO : le site choisit lui-même. Toute autre valeur : utilise l'identifiant indiqué.",
+    "eventId": "Laissez vide en mode AUTO.",
+    "publicationId": "Laissez vide en mode AUTO.",
+    "icon": "Nom d'icône (ex. users, book-open, calendar-days).",
+    "url": "Chemin interne, par exemple /publications."
+   }
+  },
+  "settings": {
+   "title": "Paramètres du site",
+   "subtitle": "Identité, contact, réseaux sociaux, référencement, langues et maintenance.",
+   "groups": {
+    "identity": "Identité",
+    "contact": "Contact",
+    "social": "Réseaux sociaux",
+    "seo": "Référencement par défaut",
+    "languages": "Langues et fuseau horaire",
+    "maintenance": "Mode maintenance",
+    "membership": "Adhésion"
+   },
+   "keys": {
+    "site": {
+     "name": "Nom de l'association",
+     "short_name": "Sigle",
+     "tagline": "Slogan",
+     "logo_media_id": "Logo"
+    },
+    "contact": {
+     "email": "E-mail de contact",
+     "phone": "Téléphone",
+     "address": "Adresse",
+     "map_url": "Lien de la carte"
+    },
+    "social": {
+     "linkedin": "LinkedIn",
+     "facebook": "Facebook",
+     "x": "X (Twitter)",
+     "youtube": "YouTube"
+    },
+    "seo": {
+     "default_title": "Titre par défaut",
+     "default_description": "Description par défaut",
+     "og_image_media_id": "Image de partage"
+    },
+    "locales": {
+     "enabled": "Langues activées",
+     "default": "Langue par défaut"
+    },
+    "events": {
+     "timezone": "Fuseau horaire des événements"
+    },
+    "maintenance": {
+     "enabled": "Activer la maintenance",
+     "message": "Message affiché aux visiteurs"
+    },
+    "membership": {
+     "applications_enabled": "Demandes d'adhésion en ligne"
+    }
+   },
+   "hints": {
+    "maintenance": {
+     "enabled": "Le site public affiche le message de maintenance. L'administration reste accessible."
+    },
+    "membership": {
+     "applications_enabled": "Réservé à l'ouverture du formulaire d'adhésion (conditions à confirmer avec l'association)."
+    }
+   }
+  },
+  "users": {
+   "title": "Utilisateurs et rôles",
+   "subtitle": "Comptes de l'administration et permissions de chaque rôle.",
+   "new": "Nouvel utilisateur",
+   "edit": "Modifier l'utilisateur",
+   "tabUsers": "Utilisateurs",
+   "tabRoles": "Rôles et permissions",
+   "colUser": "Utilisateur",
+   "role": "Rôle",
+   "lastLogin": "Dernière connexion",
+   "you": "Vous",
+   "resetPassword": "Réinitialiser le mot de passe",
+   "passwordReset": "Mot de passe réinitialisé",
+   "deleteConfirm": "Supprimer le compte de « {{name}} » ? Cette action est irréversible.",
+   "rolesHint": "Cochez les permissions de chaque rôle. Le super administrateur a toujours toutes les permissions.",
+   "permission": "Permission",
+   "fullName": "Nom complet",
+   "language": "Langue",
+   "enabled": "Compte actif",
+   "resetHint": "Définissez un nouveau mot de passe temporaire et transmettez-le à la personne concernée par un canal sûr.",
+   "password": "Mot de passe",
+   "generate": "Générer un mot de passe",
+   "passwordHint": "12 caractères minimum."
+  },
+  "perm": {
+   "DASHBOARD_VIEW": "Voir le tableau de bord",
+   "CONTENT_WRITE": "Créer et modifier le contenu (brouillons, soumission)",
+   "CONTENT_PUBLISH": "Publier, programmer, archiver et modifier le contenu en ligne",
+   "CONTENT_DELETE": "Supprimer du contenu",
+   "MEDIA_UPLOAD": "Téléverser et décrire des fichiers",
+   "MEDIA_DELETE": "Supprimer des fichiers",
+   "CATEGORY_MANAGE": "Gérer les catégories",
+   "HOMEPAGE_MANAGE": "Modifier la page d'accueil",
+   "PARTNER_MANAGE": "Gérer les partenaires",
+   "MESSAGES_VIEW": "Lire et traiter les messages de contact",
+   "AUDIT_VIEW": "Consulter le journal d'audit",
+   "USER_MANAGE": "Gérer les comptes administrateurs",
+   "ROLE_MANAGE": "Configurer les permissions des rôles",
+   "SETTINGS_MANAGE": "Modifier les paramètres du site"
+  },
+  "audit": {
+   "title": "Journal d'audit",
+   "subtitle": "Actions importantes effectuées dans l'administration.",
+   "actor": "Utilisateur",
+   "allActions": "Toutes les actions",
+   "allResources": "Toutes les ressources",
+   "resource": "Ressource",
+   "from": "Du",
+   "to": "au",
+   "summary": "Détail",
+   "empty": "Aucune entrée pour ces filtres",
+   "action": {
+    "label": "Action"
+   }
+  },
+  "messages": {
+   "title": "Messages de contact",
+   "subtitle": "Messages envoyés depuis le formulaire de contact du site.",
+   "empty": "Aucun message",
+   "emptyHint": "Les messages du formulaire de contact apparaîtront ici.",
+   "status": {
+    "NEW": "Nouveau",
+    "READ": "Lu",
+    "ARCHIVED": "Archivé"
+   },
+   "noSubject": "(sans objet)",
+   "detail": "Message",
+   "archive": "Archiver",
+   "reply": "Répondre",
+   "deleteConfirm": "Supprimer le message de « {{name}} » ?"
+  },
+  "profile": {
+   "title": "Mon profil",
+   "subtitle": "Vos informations et la sécurité de votre compte.",
+   "permissions": "Permissions",
+   "changePassword": "Changer le mot de passe",
+   "changeHint": "Vous serez déconnecté après le changement et devrez vous reconnecter.",
+   "current": "Mot de passe actuel",
+   "new": "Nouveau mot de passe",
+   "confirm": "Confirmer le nouveau mot de passe",
+   "mismatch": "Les mots de passe ne correspondent pas.",
+   "submit": "Changer le mot de passe",
+   "changed": "Mot de passe modifié. Veuillez vous reconnecter."
+  }
+ },
+ "ar": {
+  "partners": {
+   "title": "الشركاء",
+   "subtitle": "المؤسسات المعروضة في قسم «شركاؤنا» بالموقع.",
+   "new": "شريك جديد",
+   "edit": "تعديل الشريك",
+   "empty": "لا يوجد شركاء",
+   "emptyHint": "أضف المؤسسات الشريكة للجمعية.",
+   "logo": "الشعار",
+   "website": "الموقع الإلكتروني",
+   "names": "الاسم حسب اللغة",
+   "namesHint": "اختياري. إذا كانت لغة فارغة يُستعمل الاسم الرئيسي."
+  },
+  "homepage": {
+   "title": "الصفحة الرئيسية",
+   "subtitle": "عدّل نصوص وصور وكتل الصفحة الرئيسية دون المساس بالشفرة.",
+   "unsaved": "غير محفوظ",
+   "visible": "ظاهر",
+   "reset": "إلغاء التعديلات",
+   "addItem": "إضافة عنصر",
+   "noItems": "لا توجد عناصر.",
+   "moveUp": "تحريك للأعلى",
+   "moveDown": "تحريك للأسفل",
+   "sections": {
+    "HERO": {
+     "name": "لافتة الاستقبال",
+     "hint": "العنوان والوصف والأزرار وصور الصفحة الرئيسية."
+    },
+    "QUICK_ACCESS": {
+     "name": "وصول سريع",
+     "hint": "بطاقات الاختصارات الست أسفل اللافتة."
+    },
+    "THEMATIC_AREAS": {
+     "name": "المحاور",
+     "hint": "المجالات العلمية المعروضة بجانب الملتقى المبرز."
+    },
+    "MEMBERSHIP_CARDS": {
+     "name": "بطاقات الجمعية والانخراط",
+     "hint": "حول الجمعية، الانخراط، وفضاء الأعضاء."
+    },
+    "FEATURED_EVENT": {
+     "name": "التظاهرة المبرزة",
+     "hint": "تلقائي (أقرب تظاهرة مبرزة) أو مثبتة بالمعرّف."
+    },
+    "MAGAZINE": {
+     "name": "المجلة",
+     "hint": "العدد المبرز من المجلة."
+    },
+    "PARTNERS": {
+     "name": "الشركاء",
+     "hint": "عنوان قسم الشركاء."
+    },
+    "FOOTER": {
+     "name": "تذييل الصفحة",
+     "hint": "الشعار وعبارة الحقوق."
+    }
+   },
+   "fields": {
+    "title": "العنوان",
+    "description": "الوصف",
+    "primaryCta": "الزر الرئيسي",
+    "secondaryCta": "الزر الثانوي",
+    "sideText": "نص اللوحة الجانبية",
+    "primaryUrl": "رابط الزر الرئيسي",
+    "secondaryUrl": "رابط الزر الثانوي",
+    "heroImageMediaId": "صورة اللافتة",
+    "sideImageMediaId": "صورة اللوحة الجانبية",
+    "items": "العناصر",
+    "key": "المعرّف",
+    "icon": "الأيقونة",
+    "url": "الرابط",
+    "text": "النص",
+    "cta": "الزر",
+    "mode": "الوضع",
+    "eventId": "معرّف التظاهرة",
+    "publicationId": "معرّف المنشور",
+    "kicker": "العنوان التمهيدي",
+    "tagline": "الشعار",
+    "rights": "عبارة الحقوق",
+    "common": "إعدادات مشتركة",
+    "content": "المحتوى"
+   },
+   "hints": {
+    "mode": "AUTO: يختار الموقع تلقائيًا. أي قيمة أخرى: يستعمل المعرّف المحدد.",
+    "eventId": "اتركه فارغًا في وضع AUTO.",
+    "publicationId": "اتركه فارغًا في وضع AUTO.",
+    "icon": "اسم الأيقونة (مثل users وbook-open وcalendar-days).",
+    "url": "مسار داخلي، مثل /publications."
+   }
+  },
+  "settings": {
+   "title": "إعدادات الموقع",
+   "subtitle": "الهوية والاتصال والشبكات الاجتماعية وتحسين محركات البحث واللغات والصيانة.",
+   "groups": {
+    "identity": "الهوية",
+    "contact": "الاتصال",
+    "social": "الشبكات الاجتماعية",
+    "seo": "تحسين محركات البحث الافتراضي",
+    "languages": "اللغات والتوقيت",
+    "maintenance": "وضع الصيانة",
+    "membership": "الانخراط"
+   },
+   "keys": {
+    "site": {
+     "name": "اسم الجمعية",
+     "short_name": "الاختصار",
+     "tagline": "الشعار النصي",
+     "logo_media_id": "الشعار"
+    },
+    "contact": {
+     "email": "البريد الإلكتروني للتواصل",
+     "phone": "الهاتف",
+     "address": "العنوان",
+     "map_url": "رابط الخريطة"
+    },
+    "social": {
+     "linkedin": "لينكدإن",
+     "facebook": "فيسبوك",
+     "x": "إكس (تويتر)",
+     "youtube": "يوتيوب"
+    },
+    "seo": {
+     "default_title": "العنوان الافتراضي",
+     "default_description": "الوصف الافتراضي",
+     "og_image_media_id": "صورة المشاركة"
+    },
+    "locales": {
+     "enabled": "اللغات المفعّلة",
+     "default": "اللغة الافتراضية"
+    },
+    "events": {
+     "timezone": "توقيت التظاهرات"
+    },
+    "maintenance": {
+     "enabled": "تفعيل الصيانة",
+     "message": "الرسالة المعروضة للزوار"
+    },
+    "membership": {
+     "applications_enabled": "طلبات الانخراط عبر الإنترنت"
+    }
+   },
+   "hints": {
+    "maintenance": {
+     "enabled": "يعرض الموقع العمومي رسالة الصيانة. تبقى الإدارة متاحة."
+    },
+    "membership": {
+     "applications_enabled": "مخصص لفتح استمارة الانخراط (الشروط تؤكَّد مع الجمعية)."
+    }
+   }
+  },
+  "users": {
+   "title": "المستخدمون والأدوار",
+   "subtitle": "حسابات الإدارة وصلاحيات كل دور.",
+   "new": "مستخدم جديد",
+   "edit": "تعديل المستخدم",
+   "tabUsers": "المستخدمون",
+   "tabRoles": "الأدوار والصلاحيات",
+   "colUser": "المستخدم",
+   "role": "الدور",
+   "lastLogin": "آخر دخول",
+   "you": "أنت",
+   "resetPassword": "إعادة تعيين كلمة المرور",
+   "passwordReset": "تمت إعادة تعيين كلمة المرور",
+   "deleteConfirm": "هل تريد حذف حساب «{{name}}»؟ لا يمكن التراجع عن هذا الإجراء.",
+   "rolesHint": "حدّد صلاحيات كل دور. المدير العام يملك دائمًا كل الصلاحيات.",
+   "permission": "الصلاحية",
+   "fullName": "الاسم الكامل",
+   "language": "اللغة",
+   "enabled": "الحساب مفعّل",
+   "resetHint": "عيّن كلمة مرور مؤقتة جديدة وسلّمها للشخص المعني عبر قناة آمنة.",
+   "password": "كلمة المرور",
+   "generate": "توليد كلمة مرور",
+   "passwordHint": "12 حرفًا على الأقل."
+  },
+  "perm": {
+   "DASHBOARD_VIEW": "عرض لوحة القيادة",
+   "CONTENT_WRITE": "إنشاء المحتوى وتعديله (مسودات وإرسال للمراجعة)",
+   "CONTENT_PUBLISH": "نشر المحتوى وبرمجته وأرشفته وتعديل المحتوى المنشور",
+   "CONTENT_DELETE": "حذف المحتوى",
+   "MEDIA_UPLOAD": "رفع الملفات ووصفها",
+   "MEDIA_DELETE": "حذف الملفات",
+   "CATEGORY_MANAGE": "تدبير التصنيفات",
+   "HOMEPAGE_MANAGE": "تعديل الصفحة الرئيسية",
+   "PARTNER_MANAGE": "تدبير الشركاء",
+   "MESSAGES_VIEW": "قراءة رسائل التواصل ومعالجتها",
+   "AUDIT_VIEW": "الاطلاع على سجل التدقيق",
+   "USER_MANAGE": "تدبير حسابات المسؤولين",
+   "ROLE_MANAGE": "ضبط صلاحيات الأدوار",
+   "SETTINGS_MANAGE": "تعديل إعدادات الموقع"
+  },
+  "audit": {
+   "title": "سجل التدقيق",
+   "subtitle": "الإجراءات المهمة المنجزة في الإدارة.",
+   "actor": "المستخدم",
+   "allActions": "كل الإجراءات",
+   "allResources": "كل الموارد",
+   "resource": "المورد",
+   "from": "من",
+   "to": "إلى",
+   "summary": "التفاصيل",
+   "empty": "لا توجد سجلات لهذه المرشحات",
+   "action": {
+    "label": "الإجراء"
+   }
+  },
+  "messages": {
+   "title": "رسائل التواصل",
+   "subtitle": "الرسائل المرسلة من استمارة التواصل بالموقع.",
+   "empty": "لا توجد رسائل",
+   "emptyHint": "ستظهر هنا رسائل استمارة التواصل.",
+   "status": {
+    "NEW": "جديدة",
+    "READ": "مقروءة",
+    "ARCHIVED": "مؤرشفة"
+   },
+   "noSubject": "(بدون موضوع)",
+   "detail": "الرسالة",
+   "archive": "أرشفة",
+   "reply": "رد",
+   "deleteConfirm": "هل تريد حذف رسالة «{{name}}»؟"
+  },
+  "profile": {
+   "title": "ملفي الشخصي",
+   "subtitle": "معلوماتك وأمان حسابك.",
+   "permissions": "الصلاحيات",
+   "changePassword": "تغيير كلمة المرور",
+   "changeHint": "سيتم تسجيل خروجك بعد التغيير وعليك الدخول من جديد.",
+   "current": "كلمة المرور الحالية",
+   "new": "كلمة المرور الجديدة",
+   "confirm": "تأكيد كلمة المرور الجديدة",
+   "mismatch": "كلمتا المرور غير متطابقتين.",
+   "submit": "تغيير كلمة المرور",
+   "changed": "تم تغيير كلمة المرور. يرجى تسجيل الدخول من جديد."
+  }
+ },
+ "en": {
+  "partners": {
+   "title": "Partners",
+   "subtitle": "Organisations shown in the “Our partners” section of the site.",
+   "new": "New partner",
+   "edit": "Edit partner",
+   "empty": "No partners",
+   "emptyHint": "Add the association's partner institutions.",
+   "logo": "Logo",
+   "website": "Website",
+   "names": "Name per language",
+   "namesHint": "Optional. If a language is empty, the main name is used."
+  },
+  "homepage": {
+   "title": "Homepage",
+   "subtitle": "Edit the homepage texts, images and blocks without touching code.",
+   "unsaved": "Unsaved",
+   "visible": "Visible",
+   "reset": "Discard changes",
+   "addItem": "Add item",
+   "noItems": "No items.",
+   "moveUp": "Move up",
+   "moveDown": "Move down",
+   "sections": {
+    "HERO": {
+     "name": "Hero banner",
+     "hint": "Title, description, buttons and images of the homepage."
+    },
+    "QUICK_ACCESS": {
+     "name": "Quick access",
+     "hint": "The six shortcut cards under the banner."
+    },
+    "THEMATIC_AREAS": {
+     "name": "Thematic areas",
+     "hint": "Scientific areas shown next to the featured conference."
+    },
+    "MEMBERSHIP_CARDS": {
+     "name": "Association and membership cards",
+     "hint": "About, membership and members' area."
+    },
+    "FEATURED_EVENT": {
+     "name": "Featured event",
+     "hint": "Automatic (next featured event) or pinned by id."
+    },
+    "MAGAZINE": {
+     "name": "Journal",
+     "hint": "The highlighted journal issue."
+    },
+    "PARTNERS": {
+     "name": "Partners",
+     "hint": "Title of the partners section."
+    },
+    "FOOTER": {
+     "name": "Footer",
+     "hint": "Tagline and rights notice."
+    }
+   },
+   "fields": {
+    "title": "Title",
+    "description": "Description",
+    "primaryCta": "Primary button",
+    "secondaryCta": "Secondary button",
+    "sideText": "Side panel text",
+    "primaryUrl": "Primary button link",
+    "secondaryUrl": "Secondary button link",
+    "heroImageMediaId": "Banner image",
+    "sideImageMediaId": "Side panel image",
+    "items": "Items",
+    "key": "Identifier",
+    "icon": "Icon",
+    "url": "Link",
+    "text": "Text",
+    "cta": "Button",
+    "mode": "Mode",
+    "eventId": "Event id",
+    "publicationId": "Publication id",
+    "kicker": "Kicker",
+    "tagline": "Tagline",
+    "rights": "Rights notice",
+    "common": "Common settings",
+    "content": "Content"
+   },
+   "hints": {
+    "mode": "AUTO: the site picks by itself. Any other value: uses the id given.",
+    "eventId": "Leave empty in AUTO mode.",
+    "publicationId": "Leave empty in AUTO mode.",
+    "icon": "Icon name (e.g. users, book-open, calendar-days).",
+    "url": "Internal path, e.g. /publications."
+   }
+  },
+  "settings": {
+   "title": "Site settings",
+   "subtitle": "Identity, contact, social networks, SEO, languages and maintenance.",
+   "groups": {
+    "identity": "Identity",
+    "contact": "Contact",
+    "social": "Social networks",
+    "seo": "Default SEO",
+    "languages": "Languages and time zone",
+    "maintenance": "Maintenance mode",
+    "membership": "Membership"
+   },
+   "keys": {
+    "site": {
+     "name": "Association name",
+     "short_name": "Acronym",
+     "tagline": "Tagline",
+     "logo_media_id": "Logo"
+    },
+    "contact": {
+     "email": "Contact email",
+     "phone": "Phone",
+     "address": "Address",
+     "map_url": "Map link"
+    },
+    "social": {
+     "linkedin": "LinkedIn",
+     "facebook": "Facebook",
+     "x": "X (Twitter)",
+     "youtube": "YouTube"
+    },
+    "seo": {
+     "default_title": "Default title",
+     "default_description": "Default description",
+     "og_image_media_id": "Sharing image"
+    },
+    "locales": {
+     "enabled": "Enabled languages",
+     "default": "Default language"
+    },
+    "events": {
+     "timezone": "Events time zone"
+    },
+    "maintenance": {
+     "enabled": "Enable maintenance",
+     "message": "Message shown to visitors"
+    },
+    "membership": {
+     "applications_enabled": "Online membership applications"
+    }
+   },
+   "hints": {
+    "maintenance": {
+     "enabled": "The public site shows the maintenance message. The administration stays available."
+    },
+    "membership": {
+     "applications_enabled": "Reserved for opening the membership form (conditions to be confirmed with the association)."
+    }
+   }
+  },
+  "users": {
+   "title": "Users & roles",
+   "subtitle": "Administration accounts and what each role may do.",
+   "new": "New user",
+   "edit": "Edit user",
+   "tabUsers": "Users",
+   "tabRoles": "Roles & permissions",
+   "colUser": "User",
+   "role": "Role",
+   "lastLogin": "Last sign-in",
+   "you": "You",
+   "resetPassword": "Reset password",
+   "passwordReset": "Password reset",
+   "deleteConfirm": "Delete the account of “{{name}}”? This cannot be undone.",
+   "rolesHint": "Tick the permissions of each role. The super administrator always has every permission.",
+   "permission": "Permission",
+   "fullName": "Full name",
+   "language": "Language",
+   "enabled": "Account enabled",
+   "resetHint": "Set a new temporary password and give it to the person through a safe channel.",
+   "password": "Password",
+   "generate": "Generate a password",
+   "passwordHint": "At least 12 characters."
+  },
+  "perm": {
+   "DASHBOARD_VIEW": "View the dashboard",
+   "CONTENT_WRITE": "Create and edit content (drafts, submit for review)",
+   "CONTENT_PUBLISH": "Publish, schedule, archive and edit live content",
+   "CONTENT_DELETE": "Delete content",
+   "MEDIA_UPLOAD": "Upload and describe files",
+   "MEDIA_DELETE": "Delete files",
+   "CATEGORY_MANAGE": "Manage categories",
+   "HOMEPAGE_MANAGE": "Edit the homepage",
+   "PARTNER_MANAGE": "Manage partners",
+   "MESSAGES_VIEW": "Read and handle contact messages",
+   "AUDIT_VIEW": "View the audit log",
+   "USER_MANAGE": "Manage administrator accounts",
+   "ROLE_MANAGE": "Configure role permissions",
+   "SETTINGS_MANAGE": "Change site settings"
+  },
+  "audit": {
+   "title": "Audit log",
+   "subtitle": "Important actions performed in the administration.",
+   "actor": "User",
+   "allActions": "All actions",
+   "allResources": "All resources",
+   "resource": "Resource",
+   "from": "From",
+   "to": "to",
+   "summary": "Details",
+   "empty": "No entries for these filters",
+   "action": {
+    "label": "Action"
+   }
+  },
+  "messages": {
+   "title": "Contact messages",
+   "subtitle": "Messages sent from the site's contact form.",
+   "empty": "No messages",
+   "emptyHint": "Messages from the contact form will appear here.",
+   "status": {
+    "NEW": "New",
+    "READ": "Read",
+    "ARCHIVED": "Archived"
+   },
+   "noSubject": "(no subject)",
+   "detail": "Message",
+   "archive": "Archive",
+   "reply": "Reply",
+   "deleteConfirm": "Delete the message from “{{name}}”?"
+  },
+  "profile": {
+   "title": "My profile",
+   "subtitle": "Your details and account security.",
+   "permissions": "Permissions",
+   "changePassword": "Change password",
+   "changeHint": "You will be signed out after the change and will need to sign in again.",
+   "current": "Current password",
+   "new": "New password",
+   "confirm": "Confirm new password",
+   "mismatch": "The passwords do not match.",
+   "submit": "Change password",
+   "changed": "Password changed. Please sign in again."
+  }
+ }
+}

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    username: postgres
+    password: postgres
+app:
+  jwt:
+    secret: test-secret-test-secret-test-secret-0123456789
+  storage:
+    root-dir: ${java.io.tmpdir}/anagem-test-storage
+  bootstrap-admin:
+    email: root@test.local
+    password: Root-Passw0rd-123!
+  rate-limit:
+    login-per-minute: 1000
+    contact-per-minute: 1000
+logging:
+  level:
+    root: WARN
+    ma.anagem: INFO

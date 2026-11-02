@@ -1,0 +1,32 @@
+/* ANAGEM design tokens (shared with the public site). Change colours here and everything follows. */
+:root {
+  /* Brand */
+  --c-primary: #0757A6;
+  --c-primary-dark: #06427E;
+  --c-primary-light: #EAF4FC;
+  --c-white: #FFFFFF;
+  --c-bg: #F5F9FD;
+  --c-text: #18334D;
+  --c-text-2: #64748B;
+  /* Derived from the brand blue */
+  --c-primary-deep: color-mix(in oklab, var(--c-primary-dark) 78%, #000);
+  --c-primary-soft: color-mix(in oklab, var(--c-primary) 10%, white);
+  --c-line: color-mix(in oklab, var(--c-primary) 14%, white);
+  --c-line-strong: color-mix(in oklab, var(--c-primary) 28%, white);
+  --c-accent: #2F9E55;
+  --c-accent-soft: color-mix(in oklab, var(--c-accent) 14%, white);
+  /* Functional UI colours (errors, warnings) — not brand colours */
+  --c-danger: #B42318;
+  --c-danger-soft: color-mix(in oklab, var(--c-danger) 10%, white);
+  --c-warn: #9A5B0B;
+  --c-warn-soft: color-mix(in oklab, #E0A21B 18%, white);
+
+  --f-latin: "Plus Jakarta Sans", system-ui, sans-serif;
+  --f-ar: "Cairo", "Noto Sans Arabic", system-ui, sans-serif;
+
+  --r-sm: 8px; --r-md: 12px; --r-lg: 18px;
+  --sh-1: 0 1px 2px rgb(6 66 126 / .06), 0 1px 1px rgb(6 66 126 / .04);
+  --sh-2: 0 6px 18px -6px rgb(6 66 126 / .16), 0 2px 4px rgb(6 66 126 / .05);
+  --sh-3: 0 22px 44px -18px rgb(6 66 126 / .32), 0 6px 14px -6px rgb(6 66 126 / .12);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+}

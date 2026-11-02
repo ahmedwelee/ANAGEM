@@ -1,0 +1,51 @@
+<app-page-header title="messages.title" subtitle="messages.subtitle" />
+
+<div class="card overflow-hidden">
+  <div class="flex flex-wrap items-center gap-3 border-b border-line p-4">
+    <select class="input w-auto" [(ngModel)]="status" (ngModelChange)="onFilter()" [attr.aria-label]="'common.status' | transloco"><option value="">{{ 'common.allStatuses' | transloco }}</option>@for (s of statuses; track s) { <option [value]="s">{{ 'messages.status.' + s | transloco }}</option> }</select>
+  </div>
+  @if (list.error(); as e) {
+    <app-error-state [message]="e.message" (retry)="list.load()" />
+  } @else if (list.loading() && !list.items().length) {
+    <app-skeleton-rows />
+  } @else if (!list.items().length) {
+    <app-empty-state icon="mail-open" title="messages.empty" hint="messages.emptyHint" />
+  } @else {
+    <ul class="divide-y divide-line" [class.opacity-60]="list.loading()">
+      @for (m of list.items(); track m.id) {
+        <li>
+          <button type="button" class="flex w-full items-start gap-3 px-5 py-3.5 text-start transition hover:bg-primary-light/60" (click)="open(m)">
+            <span class="mt-1.5 size-2.5 shrink-0 rounded-full" [class]="m.status === 'NEW' ? 'bg-primary' : 'bg-line-strong'" [attr.title]="'messages.status.' + m.status | transloco"></span>
+            <span class="min-w-0 flex-1">
+              <span class="flex items-center gap-2"><span class="truncate text-sm" [class.font-bold]="m.status === 'NEW'">{{ m.name }}</span><span class="truncate text-xs text-muted" dir="ltr">{{ m.email }}</span></span>
+              <span class="block truncate text-sm" [class.font-semibold]="m.status === 'NEW'">{{ m.subject || ('messages.noSubject' | transloco) }}</span>
+              <span class="block truncate text-xs text-muted">{{ m.message }}</span>
+            </span>
+            <span class="shrink-0 text-xs text-muted">{{ m.createdAt | appDate: 'datetime' }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+    <app-pagination [page]="list.page()" [size]="list.size" [total]="list.total()" [totalPages]="list.totalPages()" (pageChange)="list.load($event)" />
+  }
+</div>
+
+<app-modal [open]="!!selected()" title="messages.detail" width="40rem" (closed)="selected.set(null)">
+  @if (selected(); as m) {
+    <dl class="mb-4 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+      <div><dt class="text-xs text-muted">{{ 'common.name' | transloco }}</dt><dd class="font-semibold">{{ m.name }}</dd></div>
+      <div><dt class="text-xs text-muted">{{ 'common.email' | transloco }}</dt><dd dir="ltr" class="text-start"><a [href]="'mailto:' + m.email" class="text-primary hover:underline">{{ m.email }}</a></dd></div>
+      <div><dt class="text-xs text-muted">{{ 'common.date' | transloco }}</dt><dd>{{ m.createdAt | appDate: 'datetime' }}</dd></div>
+      <div><dt class="text-xs text-muted">{{ 'common.status' | transloco }}</dt><dd>{{ 'messages.status.' + m.status | transloco }}</dd></div>
+    </dl>
+    <h3 class="mb-2 font-bold text-primary-dark">{{ m.subject || ('messages.noSubject' | transloco) }}</h3>
+    <p class="rounded-lg border border-line bg-canvas p-4 text-sm leading-relaxed whitespace-pre-wrap" dir="auto">{{ m.message }}</p>
+  }
+  @if (selected(); as m) {
+    <ng-container modal-footer>
+      <button type="button" class="btn btn-danger-ghost me-auto" (click)="remove(m)"><app-icon name="trash-2" />{{ 'common.delete' | transloco }}</button>
+      @if (m.status !== 'ARCHIVED') { <button type="button" class="btn btn-secondary" (click)="setStatus(m, 'ARCHIVED')"><app-icon name="archive" />{{ 'messages.archive' | transloco }}</button> }
+      <a [href]="'mailto:' + m.email + '?subject=Re: ' + (m.subject ?? '')" class="btn btn-primary"><app-icon name="mail" />{{ 'messages.reply' | transloco }}</a>
+    </ng-container>
+  }
+</app-modal>

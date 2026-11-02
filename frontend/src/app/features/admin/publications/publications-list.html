@@ -1,0 +1,59 @@
+<app-page-header title="publications.title" subtitle="publications.subtitle">
+  <a routerLink="/admin/publications/new" class="btn btn-primary"><app-icon name="plus" />{{ 'publications.new' | transloco }}</a>
+</app-page-header>
+
+<div class="card overflow-hidden">
+  <app-list-toolbar placeholder="publications.search" (search)="onSearch($event)">
+    <select class="input w-auto" [(ngModel)]="kind" (ngModelChange)="onFilter()" [attr.aria-label]="'common.kind' | transloco">
+      <option value="">{{ 'publications.allKinds' | transloco }}</option>
+      @for (k of kinds; track k) { <option [value]="k">{{ 'kind.' + k | transloco }}</option> }
+    </select>
+    <select class="input w-auto" [(ngModel)]="status" (ngModelChange)="onFilter()" [attr.aria-label]="'common.status' | transloco">
+      <option value="">{{ 'common.allStatuses' | transloco }}</option>
+      @for (s of statuses; track s) { <option [value]="s">{{ 'status.' + s | transloco }}</option> }
+    </select>
+    <input type="number" class="input w-28" [(ngModel)]="year" (ngModelChange)="onFilter()" min="1900" max="2100" [placeholder]="'common.year' | transloco" [attr.aria-label]="'common.year' | transloco" />
+  </app-list-toolbar>
+
+  @if (list.error(); as e) {
+    <app-error-state [message]="e.message" (retry)="list.load()" />
+  } @else if (list.loading() && !list.items().length) {
+    <app-skeleton-rows />
+  } @else if (!list.items().length) {
+    <app-empty-state icon="book-open" title="publications.empty" hint="publications.emptyHint"><a routerLink="/admin/publications/new" class="btn btn-primary btn-sm"><app-icon name="plus" />{{ 'publications.new' | transloco }}</a></app-empty-state>
+  } @else {
+    <div class="overflow-x-auto" [class.opacity-60]="list.loading()">
+      <table class="tbl">
+        <thead><tr>
+          <th>{{ 'publications.colTitle' | transloco }}</th><th>{{ 'common.year' | transloco }}</th><th>{{ 'common.status' | transloco }}</th>
+          <th>{{ 'common.languages' | transloco }}</th><th class="hidden lg:table-cell">{{ 'common.updated' | transloco }}</th><th class="w-24"><span class="sr-only">{{ 'common.actions' | transloco }}</span></th>
+        </tr></thead>
+        <tbody>
+          @for (p of list.items(); track p.id) {
+            <tr>
+              <td class="max-w-md">
+                <a [routerLink]="['/admin/publications', p.id]" class="font-semibold text-primary-dark hover:text-primary hover:underline">{{ p.title }}</a>
+                <span class="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
+                  <span class="badge badge-info">{{ 'kind.' + p.kind | transloco }}</span>
+                  @if (p.issueNumber) { <span>N° {{ p.issueNumber }}</span> }
+                  @if (p.featured) { <span class="inline-flex items-center gap-1 text-warn"><app-icon name="star" />{{ 'common.featured' | transloco }}</span> }
+                </span>
+              </td>
+              <td class="tabular-nums">{{ p.year }}</td>
+              <td><app-status-badge [status]="p.status" /></td>
+              <td><app-translation-dots [items]="p.translationStatus" /></td>
+              <td class="hidden lg:table-cell text-muted">{{ p.updatedAt | appDate: 'datetime' }}</td>
+              <td>
+                <span class="flex justify-end gap-1">
+                  <a [routerLink]="['/admin/publications', p.id]" class="btn btn-ghost btn-icon btn-sm" [attr.aria-label]="'common.edit' | transloco"><app-icon name="pencil" /></a>
+                  @if (auth.can('CONTENT_DELETE')) { <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" (click)="remove(p)" [attr.aria-label]="'common.delete' | transloco"><app-icon name="trash-2" /></button> }
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [page]="list.page()" [size]="list.size" [total]="list.total()" [totalPages]="list.totalPages()" (pageChange)="list.load($event)" />
+  }
+</div>

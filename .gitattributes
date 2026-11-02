@@ -1,0 +1,21 @@
+# Normalise line endings: text is stored with LF in the repository, whatever the operating system.
+* text=auto eol=lf
+
+# Scripts must keep LF to run on Linux and macOS (also inside Docker).
+*.sh   text eol=lf
+mvnw   text eol=lf
+# Windows launchers keep CRLF.
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+
+# Binary files: no line-ending conversion, no textual diffs.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.woff binary
+*.woff2 binary
+*.jar  binary

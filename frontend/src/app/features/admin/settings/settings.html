@@ -1,0 +1,60 @@
+<app-page-header title="settings.title" subtitle="settings.subtitle">
+  <button type="button" class="btn btn-primary" [disabled]="saving() || !dirtyKeys().length" (click)="save()">
+    <app-icon [name]="saving() ? 'loader-circle' : 'save'" [class.animate-spin]="saving()" />{{ 'common.save' | transloco }}
+    @if (dirtyKeys().length) { <span class="rounded-full bg-white/25 px-1.5 text-xs">{{ dirtyKeys().length }}</span> }
+  </button>
+</app-page-header>
+
+<app-api-error-banner [error]="saveError()" />
+
+@if (error(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (loading()) {
+  <div class="card"><app-skeleton-rows [rows]="8" /></div>
+} @else {
+  <div class="space-y-6">
+    @for (g of groups; track g.id) {
+      <section class="card">
+        <header class="flex items-center gap-3 border-b border-line px-5 py-3.5"><app-icon [name]="g.icon" class="text-lg text-primary" /><h2 class="section-title">{{ 'settings.groups.' + g.id | transloco }}</h2></header>
+        <div class="grid gap-5 p-5 md:grid-cols-2">
+          @for (f of g.fields; track f.key) {
+            @if (has(f.key)) {
+              <div [class.md:col-span-2]="f.type === 'localized' || f.type === 'langs'">
+                @switch (f.type) {
+                  @case ('localized') {
+                    <span class="label">{{ 'settings.keys.' + f.key | transloco }}</span>
+                    <div class="grid gap-2 md:grid-cols-3">
+                      @for (l of langs; track l) {
+                        <div class="flex items-start gap-2"><span class="mt-2.5 w-6 text-[11px] font-bold text-muted uppercase" dir="ltr">{{ l }}</span>
+                          <textarea class="input" rows="2" [ngModel]="loc(f.key)[l]" (ngModelChange)="setLoc(f.key, l, $event)" [attr.dir]="l === 'ar' ? 'rtl' : 'ltr'" [attr.aria-label]="('settings.keys.' + f.key | transloco) + ' ' + l"></textarea></div>
+                      }
+                    </div>
+                  }
+                  @case ('bool') {
+                    <label class="flex items-start gap-3 text-sm"><input type="checkbox" class="check mt-0.5" [ngModel]="values[f.key]" (ngModelChange)="setBool(f.key, $event)" /><span><span class="font-semibold">{{ 'settings.keys.' + f.key | transloco }}</span><span class="block text-xs text-muted">{{ 'settings.hints.' + f.key | transloco }}</span></span></label>
+                  }
+                  @case ('langs') {
+                    <span class="label">{{ 'settings.keys.' + f.key | transloco }}</span>
+                    <div class="flex flex-wrap gap-4">@for (l of langs; track l) { <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="check" [ngModel]="langOn(l)" (ngModelChange)="toggleLang(l, $event)" />{{ 'lang.' + l | transloco }}</label> }</div>
+                  }
+                  @case ('lang') {
+                    <label class="label" [attr.for]="f.key">{{ 'settings.keys.' + f.key | transloco }}</label>
+                    <select class="input" [id]="f.key" [ngModel]="values[f.key]" (ngModelChange)="setStr(f.key, $event)">@for (l of langs; track l) { <option [value]="l">{{ 'lang.' + l | transloco }}</option> }</select>
+                  }
+                  @case ('media') {
+                    <span class="label">{{ 'settings.keys.' + f.key | transloco }}</span>
+                    <app-media-field [ngModel]="media()[f.key] ?? null" (ngModelChange)="setMedia(f.key, $event)" kind="IMAGE" />
+                  }
+                  @default {
+                    <label class="label" [attr.for]="f.key">{{ 'settings.keys.' + f.key | transloco }}</label>
+                    <input class="input" [id]="f.key" [type]="f.type === 'email' ? 'email' : 'text'" [attr.dir]="f.type === 'text' && f.key !== 'site.short_name' ? 'auto' : 'ltr'" [ngModel]="str(f.key)" (ngModelChange)="setStr(f.key, $event)" [placeholder]="f.type === 'url' ? 'https://' : ''" />
+                  }
+                }
+              </div>
+            }
+          }
+        </div>
+      </section>
+    }
+  </div>
+}

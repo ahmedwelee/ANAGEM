@@ -1,0 +1,48 @@
+# ── Secrets and local configuration: never commit ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+.claude/settings.local.json
+
+# ── Operating system and editors ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# ── Backend (Spring Boot / Maven) ─────────────────────────────────────────────
+backend/target/
+# Uploaded files of a local run: the media library lives in a volume, not in git.
+backend/storage/
+hs_err_pid*
+*.log
+
+# ── Frontend (Angular) ────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+frontend/tmp/
+# Generated: dictionaries from frontend/i18n-src (`npm run i18n`) and the icon sprite (`npm run icons`).
+frontend/public/i18n/
+frontend/public/icons.svg
+*.tsbuildinfo
+npm-debug.log*
+
+# ── End-to-end tests (Playwright) ─────────────────────────────────────────────
+e2e/node_modules/
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
+e2e/playwright/.cache/

@@ -1,0 +1,128 @@
+<app-page-header [title]="isNew ? 'news.new' : 'news.edit'" [subtitle]="isNew ? 'news.newHint' : null">
+  <a routerLink="/admin/news" class="btn btn-ghost"><app-icon name="chevron-left" class="rtl:-scale-x-100" />{{ 'common.back' | transloco }}</a>
+  @if (!isNew) {
+    <button type="button" class="btn btn-secondary" (click)="openPreview()"><app-icon name="eye" />{{ 'common.preview' | transloco }}</button>
+    @if (auth.can('CONTENT_DELETE')) { <button type="button" class="btn btn-danger-ghost" (click)="remove()"><app-icon name="trash-2" />{{ 'common.delete' | transloco }}</button> }
+  }
+  <button type="button" class="btn btn-primary" [disabled]="saving() || loading()" (click)="save()">
+    <app-icon [name]="saving() ? 'loader-circle' : 'save'" [class.animate-spin]="saving()" />{{ 'common.save' | transloco }}
+  </button>
+</app-page-header>
+
+<app-api-error-banner [error]="error()" />
+
+@if (loadError(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (loading()) {
+  <div class="grid gap-6 xl:grid-cols-[1fr_22rem]"><div class="skeleton h-[32rem] rounded-card"></div><div class="skeleton h-80 rounded-card"></div></div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" class="grid items-start gap-6 xl:grid-cols-[1fr_22rem]" novalidate>
+    <div class="space-y-6">
+    <!-- Article picture -->
+    <div class="card card-pad">
+      <h2 class="section-title">{{ 'news.coverTitle' | transloco }}</h2>
+      <p class="hint mb-3">{{ 'news.coverHint' | transloco }}</p>
+      <app-media-field formControlName="featuredImage" kind="IMAGE" variant="cover" />
+    </div>
+    <!-- Content in three languages -->
+    <div class="card">
+      <app-lang-tabs [(active)]="activeLang" [filled]="filled()" [status]="entity()?.translationStatus ?? null" />
+      <div formGroupName="translations" class="p-5">
+        @for (l of langs; track l) {
+          <div [formGroupName]="l" [hidden]="activeLang() !== l" role="tabpanel" class="space-y-5">
+            <div>
+              <label class="label" [attr.for]="'title-' + l">{{ 'news.fieldTitle' | transloco }}</label>
+              <input class="input text-lg font-semibold" [id]="'title-' + l" formControlName="title" [attr.dir]="dirOf(l)" [attr.lang]="l" maxlength="300" />
+              <app-field-error [control]="tr(l)" />
+              <app-field-error [control]="tr(l)?.get('title') ?? null" />
+            </div>
+            <div>
+              <label class="label" [attr.for]="'summary-' + l">{{ 'news.fieldSummary' | transloco }}</label>
+              <textarea class="input" rows="3" [id]="'summary-' + l" formControlName="summary" [attr.dir]="dirOf(l)" [attr.lang]="l" maxlength="1000"></textarea>
+              <p class="hint">{{ 'news.summaryHint' | transloco }}</p>
+            </div>
+            <div>
+              <span class="label">{{ 'news.fieldContent' | transloco }}</span>
+              <app-rich-text-editor formControlName="content" [dir]="dirOf(l)" [lang]="l" [placeholder]="'news.contentPlaceholder' | transloco" />
+            </div>
+            <details class="rounded-lg border border-line bg-canvas px-4 py-3">
+              <summary class="cursor-pointer text-sm font-semibold text-primary-dark">{{ 'news.seo' | transloco }}</summary>
+              <div class="mt-3 space-y-4">
+                <div>
+                  <label class="label" [attr.for]="'seot-' + l">{{ 'news.seoTitle' | transloco }}</label>
+                  <input class="input" [id]="'seot-' + l" formControlName="seoTitle" [attr.dir]="dirOf(l)" maxlength="300" />
+                </div>
+                <div>
+                  <label class="label" [attr.for]="'seod-' + l">{{ 'news.seoDescription' | transloco }}</label>
+                  <textarea class="input" rows="2" [id]="'seod-' + l" formControlName="seoDescription" [attr.dir]="dirOf(l)" maxlength="500"></textarea>
+                  <p class="hint">{{ 'news.seoHint' | transloco }}</p>
+                </div>
+              </div>
+            </details>
+          </div>
+        }
+        <app-field-error [control]="form.controls.translations" />
+      </div>
+    </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="space-y-6">
+      @if (entity(); as e) {
+        <app-status-actions [status]="e.status" [publishedAt]="e.publishedAt" [busy]="statusBusy() || saving()" (change)="changeStatus($event)" />
+      } @else {
+        <div class="card card-pad flex gap-3 text-sm text-muted"><app-icon name="info" class="mt-0.5 text-lg text-primary" /><p>{{ 'workflow.saveFirst' | transloco }}</p></div>
+      }
+
+      <div class="card card-pad space-y-4">
+        <h2 class="section-title">{{ 'news.settings' | transloco }}</h2>
+        <div>
+          <label class="label" for="category">{{ 'common.category' | transloco }}</label>
+          <select id="category" class="input" formControlName="categoryId">
+            <option [ngValue]="null">{{ 'common.noCategory' | transloco }}</option>
+            @for (c of categories(); track c.id) { <option [ngValue]="c.id">{{ catName(c) }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="label" for="tags">{{ 'news.tags' | transloco }}</label>
+          <input id="tags" class="input" formControlName="tagsText" dir="auto" [placeholder]="'news.tagsPlaceholder' | transloco" />
+          <p class="hint">{{ 'news.tagsHint' | transloco }}</p>
+        </div>
+        <label class="flex items-start gap-3 text-sm"><input type="checkbox" class="check mt-0.5" formControlName="featured" /><span><span class="font-semibold">{{ 'common.featured' | transloco }}</span><span class="block text-xs text-muted">{{ 'news.featuredHint' | transloco }}</span></span></label>
+        @if (!isNew) {
+          <div>
+            <label class="label" for="slug">{{ 'common.slug' | transloco }}</label>
+            <input id="slug" class="input font-mono text-xs" dir="ltr" formControlName="slug" />
+            <app-field-error [control]="form.controls.slug" />
+            <p class="hint">{{ 'common.slugHint' | transloco }}</p>
+          </div>
+        }
+      </div>
+
+      @if (entity(); as e) {
+        <div class="card card-pad space-y-1.5 text-xs text-muted">
+          <p><span class="font-semibold text-ink">{{ 'common.created' | transloco }}:</span> {{ e.createdAt | appDate: 'datetime' }}</p>
+          <p><span class="font-semibold text-ink">{{ 'common.updated' | transloco }}:</span> {{ e.updatedAt | appDate: 'datetime' }}</p>
+          @if (e.authorName) { <p><span class="font-semibold text-ink">{{ 'common.author' | transloco }}:</span> {{ e.authorName }}</p> }
+        </div>
+      }
+    </aside>
+  </form>
+}
+
+<app-modal [open]="previewOpen()" title="news.previewTitle" width="48rem" (closed)="previewOpen.set(false)">
+  @if (previewError(); as e) {
+    <app-error-state [message]="e.message" (retry)="openPreview()" />
+  } @else if (previewData(); as p) {
+    <p class="mb-4 flex items-center gap-2 text-xs text-muted"><app-icon name="info" />{{ 'news.previewNote' | transloco }}
+      @if (p.fallback) { <span class="badge badge-review">{{ 'news.fallback' | transloco: { lang: ('lang.' + p.locale | transloco) } }}</span> }</p>
+    <article [attr.dir]="p.locale === 'ar' ? 'rtl' : 'ltr'" [attr.lang]="p.locale">
+      @if (p.image) { <img [src]="p.image.url" [alt]="p.image.altText ?? ''" class="mb-5 max-h-72 w-full rounded-lg object-cover" /> }
+      <h2 class="text-2xl font-extrabold text-primary-dark">{{ p.title }}</h2>
+      @if (p.summary) { <p class="mt-2 text-lg text-muted">{{ p.summary }}</p> }
+      <div class="rte-content mt-5" [innerHTML]="p.content"></div>
+    </article>
+  } @else {
+    <div class="space-y-3"><div class="skeleton h-8 w-2/3"></div><div class="skeleton h-4"></div><div class="skeleton h-4 w-5/6"></div><div class="skeleton h-40"></div></div>
+  }
+</app-modal>

@@ -1,0 +1,53 @@
+<div class="grid min-h-dvh lg:grid-cols-[1.1fr_1fr]">
+  <section class="relative hidden overflow-hidden bg-primary-dark text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
+    <svg class="pointer-events-none absolute inset-0 size-full opacity-[.12]" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.2">
+        @for (i of [0,1,2,3,4,5,6,7,8]; track i) { <path [attr.d]="'M-20 ' + (420 - i * 38) + 'c110-90 210 40 330-10s170-150 330-70'" /> }
+      </g>
+    </svg>
+    <div class="relative flex items-center gap-3"><img src="anagem-logo-white.png" alt="" width="64" height="64" class="size-16" /><span class="text-2xl font-extrabold tracking-wide">ANAGEM</span></div>
+    <div class="relative max-w-md">
+      <h1 class="text-4xl leading-tight font-extrabold">{{ 'login.heroTitle' | transloco }}</h1>
+      <p class="mt-4 text-white/75">{{ 'login.heroText' | transloco }}</p>
+    </div>
+    <p class="relative text-xs text-white/50">© {{ 2026 }} ANAGEM</p>
+  </section>
+
+  <section class="relative flex items-center justify-center p-6 sm:p-10">
+    <div class="absolute end-4 top-4 inline-flex rounded-lg border border-line-strong bg-surface p-0.5" role="group" [attr.aria-label]="'common.languages' | transloco">
+      @for (l of langs; track l) {
+        <button type="button" class="rounded-md px-2.5 py-1 text-xs font-bold uppercase transition" [class]="lang.lang() === l ? 'bg-primary text-white' : 'text-muted hover:text-primary'" [attr.aria-pressed]="lang.lang() === l" (click)="setLang(l)">{{ l }}</button>
+      }
+    </div>
+
+    <form class="w-full max-w-sm" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <img src="anagem-logo-white.png" alt="" class="mb-6 size-14 rounded-full bg-primary p-2 lg:hidden" />
+      <h2 class="page-title">{{ 'login.title' | transloco }}</h2>
+      <p class="mt-1 mb-6 text-sm text-muted">{{ 'login.subtitle' | transloco }}</p>
+
+      @if (errorKey(); as k) {
+        <div class="mb-4 flex items-start gap-2 rounded-lg border border-danger/30 bg-danger-soft px-3 py-2.5 text-sm text-danger" role="alert"><app-icon name="circle-alert" class="mt-0.5" />{{ k | transloco }}</div>
+      }
+
+      <div class="mb-4">
+        <label class="label" for="email">{{ 'login.email' | transloco }}</label>
+        <input id="email" type="email" class="input" formControlName="email" autocomplete="username" dir="ltr" autofocus />
+        <app-field-error [control]="form.controls.email" />
+      </div>
+      <div class="mb-6">
+        <label class="label" for="password">{{ 'login.password' | transloco }}</label>
+        <div class="relative">
+          <input id="password" [type]="showPassword() ? 'text' : 'password'" class="input pe-11" formControlName="password" autocomplete="current-password" dir="ltr" />
+          <button type="button" class="absolute inset-y-0 end-0 grid w-11 place-items-center text-muted hover:text-primary" (click)="showPassword.set(!showPassword())" [attr.aria-label]="(showPassword() ? 'login.hide' : 'login.show') | transloco">
+            <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" />
+          </button>
+        </div>
+        <app-field-error [control]="form.controls.password" />
+      </div>
+      <button type="submit" class="btn btn-primary h-11 w-full" [disabled]="loading()">
+        @if (loading()) { <app-icon name="loader-circle" class="animate-spin" /> }
+        {{ 'login.submit' | transloco }}
+      </button>
+    </form>
+  </section>
+</div>

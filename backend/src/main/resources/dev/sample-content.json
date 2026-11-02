@@ -1,0 +1,172 @@
+{
+ "news": [
+  {
+   "slug": "sample-appel-a-communications",
+   "publishedAt": "2026-10-12T09:00:00Z",
+   "category": "events",
+   "featured": false,
+   "tags": [
+    "sample",
+    "colloque"
+   ],
+   "translations": {
+    "fr": {
+     "title": "Appel à communications – Colloque ANAGEM / FSHS",
+     "summary": "Mobiliser le territoire pour penser le développement dans une perspective durable et inclusive : regards géographiques."
+    },
+    "ar": {
+     "title": "الدعوة إلى تقديم مداخلات – ملتقى الجمعية وكلية العلوم الإنسانية والاجتماعية",
+     "summary": "استثمار التراب للتفكير في التنمية وفق منظور مستدام ودامج: رؤى جغرافية."
+    },
+    "en": {
+     "title": "Call for papers – ANAGEM / FSHS conference",
+     "summary": "Mobilising territories to rethink development from a sustainable and inclusive perspective: geographical viewpoints."
+    }
+   }
+  },
+  {
+   "slug": "sample-publication-numero-12",
+   "publishedAt": "2026-10-03T09:00:00Z",
+   "category": "publications",
+   "featured": false,
+   "tags": [
+    "sample",
+    "revue"
+   ],
+   "translations": {
+    "fr": {
+     "title": "Publication du numéro 12 de la revue ANAGEM",
+     "summary": "Territoires, sociétés et environnement."
+    },
+    "ar": {
+     "title": "صدور العدد 12 من مجلة الجمعية",
+     "summary": "المجالات والمجتمعات والبيئة."
+    },
+    "en": {
+     "title": "Issue 12 of the ANAGEM journal published",
+     "summary": "Territories, societies and environment."
+    }
+   }
+  },
+  {
+   "slug": "sample-adhesion-en-ligne",
+   "publishedAt": "2026-09-28T09:00:00Z",
+   "category": "association",
+   "featured": false,
+   "tags": [
+    "sample"
+   ],
+   "translations": {
+    "fr": {
+     "title": "Adhésion en ligne : rejoignez l'ANAGEM !",
+     "summary": "Ensemble pour une géographie au service des territoires."
+    },
+    "ar": {
+     "title": "الانخراط عبر الإنترنت: انضموا إلى الجمعية!",
+     "summary": "معًا من أجل جغرافيا في خدمة المجالات."
+    },
+    "en": {
+     "title": "Join online: become a member of ANAGEM!",
+     "summary": "Together for a geography that serves territories."
+    }
+   }
+  }
+ ],
+ "events": [
+  {
+   "slug": "sample-conseil-anagem-2026",
+   "type": "MEETING",
+   "startsAt": "2026-10-14T09:00:00Z",
+   "endsAt": "2026-10-14T14:00:00Z",
+   "allDay": false,
+   "featured": false,
+   "translations": {
+    "fr": {
+     "title": "Conseil de l'ANAGEM",
+     "location": "Rabat – Siège de l'association"
+    },
+    "ar": {
+     "title": "مجلس الجمعية",
+     "location": "الرباط – مقر الجمعية"
+    },
+    "en": {
+     "title": "ANAGEM Council",
+     "location": "Rabat – Association headquarters"
+    }
+   }
+  },
+  {
+   "slug": "sample-seminaire-doctoral-2026",
+   "type": "SEMINAR",
+   "startsAt": "2026-11-22T00:00:00Z",
+   "endsAt": "2026-11-22T00:00:00Z",
+   "allDay": true,
+   "featured": false,
+   "translations": {
+    "fr": {
+     "title": "Séminaire doctoral",
+     "description": "Dynamiques territoriales et gouvernance",
+     "location": "Rabat"
+    },
+    "ar": {
+     "title": "ندوة الدكتوراه",
+     "description": "الديناميات المجالية والحكامة",
+     "location": "الرباط"
+    },
+    "en": {
+     "title": "Doctoral seminar",
+     "description": "Territorial dynamics and governance",
+     "location": "Rabat"
+    }
+   }
+  },
+  {
+   "slug": "sample-journees-d-etude-2026",
+   "type": "STUDY_DAY",
+   "startsAt": "2026-12-12T00:00:00Z",
+   "endsAt": "2026-12-13T00:00:00Z",
+   "allDay": true,
+   "featured": false,
+   "translations": {
+    "fr": {
+     "title": "Journées d'étude",
+     "description": "Géomatique et territoires",
+     "location": "Rabat"
+    },
+    "ar": {
+     "title": "أيام دراسية",
+     "description": "الجيوماتيك والمجالات",
+     "location": "الرباط"
+    },
+    "en": {
+     "title": "Study days",
+     "description": "Geomatics and territories",
+     "location": "Rabat"
+    }
+   }
+  }
+ ],
+ "publications": [
+  {
+   "kind": "MAGAZINE_ISSUE",
+   "year": 2026,
+   "issue": "12",
+   "featured": true,
+   "publishedAt": "2026-10-03T09:00:00Z",
+   "translations": {
+    "fr": {
+     "title": "Géographie du Maroc — Numéro 12",
+     "description": "Territoires, sociétés et environnement"
+    },
+    "ar": {
+     "title": "جغرافية المغرب — العدد 12",
+     "description": "المجالات والمجتمعات والبيئة"
+    },
+    "en": {
+     "title": "Géographie du Maroc — Issue 12",
+     "description": "Territories, societies and environment"
+    }
+   }
+  }
+ ]
+}

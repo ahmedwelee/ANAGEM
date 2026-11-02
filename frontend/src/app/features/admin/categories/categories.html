@@ -1,0 +1,68 @@
+<app-page-header title="categories.title" subtitle="categories.subtitle">
+  @if (canManage()) { <button type="button" class="btn btn-primary" (click)="open('new')"><app-icon name="plus" />{{ 'categories.new' | transloco }}</button> }
+</app-page-header>
+
+<div class="card overflow-hidden">
+  <div class="tabs px-3 pt-2" role="tablist">
+    @for (ty of types; track ty) { <button type="button" role="tab" class="tab" [attr.aria-selected]="type() === ty" (click)="type.set(ty)">{{ 'categories.type.' + ty | transloco }}</button> }
+  </div>
+  @if (error(); as e) {
+    <app-error-state [message]="e.message" (retry)="load()" />
+  } @else if (loading()) {
+    <app-skeleton-rows [rows]="4" />
+  } @else if (!items().length) {
+    <app-empty-state icon="tags" title="categories.empty" hint="categories.emptyHint">@if (canManage()) { <button type="button" class="btn btn-primary btn-sm" (click)="open('new')"><app-icon name="plus" />{{ 'categories.new' | transloco }}</button> }</app-empty-state>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="tbl">
+        <thead><tr><th>{{ 'common.name' | transloco }}</th><th>{{ 'common.slug' | transloco }}</th><th>{{ 'categories.usage' | transloco }}</th><th>{{ 'common.status' | transloco }}</th><th class="w-28"><span class="sr-only">{{ 'common.actions' | transloco }}</span></th></tr></thead>
+        <tbody>
+          @for (c of items(); track c.id) {
+            <tr>
+              <td class="font-semibold text-primary-dark">{{ name(c) }}</td>
+              <td class="font-mono text-xs text-muted" dir="ltr">{{ c.slug }}</td>
+              <td class="tabular-nums">{{ c.usageCount }}</td>
+              <td><span class="badge" [class]="c.active ? 'badge-published' : 'badge-draft'">{{ (c.active ? 'common.active' : 'common.inactive') | transloco }}</span></td>
+              <td>
+                @if (canManage()) {
+                  <span class="flex justify-end gap-1">
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="toggleActive(c)" [attr.aria-label]="(c.active ? 'categories.deactivate' : 'categories.activate') | transloco" [attr.title]="(c.active ? 'categories.deactivate' : 'categories.activate') | transloco"><app-icon [name]="c.active ? 'eye-off' : 'eye'" /></button>
+                    <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="open(c)" [attr.aria-label]="'common.edit' | transloco"><app-icon name="pencil" /></button>
+                    <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" (click)="remove(c)" [attr.aria-label]="'common.delete' | transloco"><app-icon name="trash-2" /></button>
+                  </span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<app-modal [open]="!!editing()" [title]="editing() === 'new' ? 'categories.new' : 'categories.edit'" width="36rem" (closed)="editing.set(null)">
+  <app-api-error-banner [error]="formError()" />
+  <form [formGroup]="form" (ngSubmit)="save()" id="cat-form" novalidate class="space-y-4">
+    <div class="rounded-lg border border-line">
+      <app-lang-tabs [(active)]="activeLang" [filled]="filled()" />
+      <div formGroupName="translations" class="p-4">
+        @for (l of langs; track l) {
+          <div [formGroupName]="l" [hidden]="activeLang() !== l" class="space-y-3">
+            <div><label class="label" [attr.for]="'cn-' + l">{{ 'common.name' | transloco }}</label><input class="input" [id]="'cn-' + l" formControlName="name" [attr.dir]="dirOf(l)" maxlength="150" /><app-field-error [control]="tr(l)" /></div>
+            <div><label class="label" [attr.for]="'cd-' + l">{{ 'common.description' | transloco }}</label><textarea class="input" rows="2" [id]="'cd-' + l" formControlName="description" [attr.dir]="dirOf(l)" maxlength="500"></textarea></div>
+          </div>
+        }
+        <app-field-error [control]="form.controls.translations" />
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div><label class="label" for="cs">{{ 'common.slug' | transloco }}</label><input id="cs" class="input font-mono text-xs" dir="ltr" formControlName="slug" /><app-field-error [control]="form.controls.slug" /></div>
+      <div><label class="label" for="co">{{ 'common.order' | transloco }}</label><input id="co" type="number" class="input" formControlName="sortOrder" /></div>
+    </div>
+    <label class="flex items-center gap-3 text-sm"><input type="checkbox" class="check" formControlName="active" /><span class="font-semibold">{{ 'common.active' | transloco }}</span></label>
+  </form>
+  <ng-container modal-footer>
+    <button type="button" class="btn btn-secondary" (click)="editing.set(null)">{{ 'common.cancel' | transloco }}</button>
+    <button type="submit" form="cat-form" class="btn btn-primary" [disabled]="saving()">@if (saving()) { <app-icon name="loader-circle" class="animate-spin" /> }{{ 'common.save' | transloco }}</button>
+  </ng-container>
+</app-modal>

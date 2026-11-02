@@ -1,0 +1,31 @@
+<app-page-header title="profile.title" subtitle="profile.subtitle" />
+
+<div class="grid gap-6 lg:grid-cols-[22rem_1fr]">
+  @if (auth.user(); as u) {
+    <section class="card card-pad">
+      <div class="mb-4 flex items-center gap-3">
+        <span class="grid size-14 place-items-center rounded-full bg-primary text-lg font-bold text-white">{{ u.fullName.slice(0, 1).toUpperCase() }}</span>
+        <span><span class="block font-bold text-primary-dark">{{ u.fullName }}</span><span class="badge badge-info mt-1">{{ 'roles.' + u.role | transloco }}</span></span>
+      </div>
+      <dl class="space-y-2.5 text-sm">
+        <div><dt class="text-xs text-muted">{{ 'common.email' | transloco }}</dt><dd dir="ltr" class="text-start">{{ u.email }}</dd></div>
+        <div><dt class="text-xs text-muted">{{ 'users.lastLogin' | transloco }}</dt><dd>{{ u.lastLoginAt | appDate: 'datetime' }}</dd></div>
+        <div><dt class="text-xs text-muted">{{ 'profile.permissions' | transloco }}</dt><dd class="mt-1 flex flex-wrap gap-1">@for (p of u.permissions; track p) { <span class="rounded bg-canvas px-1.5 py-0.5 font-mono text-[10px] text-muted" dir="ltr">{{ p }}</span> }</dd></div>
+      </dl>
+    </section>
+  }
+
+  <section class="card card-pad">
+    <h2 class="section-title mb-1 flex items-center gap-2"><app-icon name="lock" class="text-primary" />{{ 'profile.changePassword' | transloco }}</h2>
+    <p class="mb-4 text-sm text-muted">{{ 'profile.changeHint' | transloco }}</p>
+    <app-api-error-banner [error]="error()" />
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="max-w-md space-y-4">
+      <div><label class="label" for="cp">{{ 'profile.current' | transloco }}</label><input id="cp" class="input" dir="ltr" [type]="show() ? 'text' : 'password'" formControlName="current" autocomplete="current-password" /><app-field-error [control]="form.controls.current" /></div>
+      <div><label class="label" for="np">{{ 'profile.new' | transloco }}</label><input id="np" class="input" dir="ltr" [type]="show() ? 'text' : 'password'" formControlName="next" autocomplete="new-password" /><app-field-error [control]="form.controls.next" /><p class="hint">{{ 'users.passwordHint' | transloco }}</p></div>
+      <div><label class="label" for="cf">{{ 'profile.confirm' | transloco }}</label><input id="cf" class="input" dir="ltr" [type]="show() ? 'text' : 'password'" formControlName="confirm" autocomplete="new-password" />
+        @if (form.errors?.['mismatch'] && form.controls.confirm.touched) { <p class="field-error">{{ 'profile.mismatch' | transloco }}</p> }</div>
+      <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="check" [checked]="show()" (change)="show.set(!show())" />{{ 'login.show' | transloco }}</label>
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">@if (saving()) { <app-icon name="loader-circle" class="animate-spin" /> }{{ 'profile.submit' | transloco }}</button>
+    </form>
+  </section>
+</div>

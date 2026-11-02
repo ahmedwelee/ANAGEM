@@ -1,0 +1,64 @@
+<div class="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
+  <!-- Sidebar -->
+  @if (menuOpen()) { <div class="fixed inset-0 z-30 bg-primary-deep/50 backdrop-blur-[2px] lg:hidden" (click)="menuOpen.set(false)"></div> }
+  <aside class="fixed inset-y-0 start-0 z-40 flex w-68 -translate-x-full flex-col bg-primary-dark text-white shadow-pop transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:z-auto lg:h-dvh lg:w-auto lg:translate-x-0 rtl:translate-x-full lg:rtl:translate-x-0"
+    [class.translate-x-0!]="menuOpen()" [attr.aria-label]="'nav.label' | transloco">
+    <a routerLink="/admin" class="flex items-center gap-3 border-b border-white/10 px-5 py-4" (click)="menuOpen.set(false)">
+      <img src="anagem-logo-white.png" alt="" width="44" height="44" class="size-11" />
+      <span class="leading-tight"><span class="block text-lg font-extrabold tracking-wide">ANAGEM</span><span class="block text-xs text-white/70">{{ 'nav.admin' | transloco }}</span></span>
+    </a>
+    <nav class="flex-1 overflow-y-auto px-3 py-4">
+      @for (g of groups(); track $index) {
+        <div class="mb-4">
+          @if (g.label) { <p class="mb-1.5 px-3 text-[11px] font-bold tracking-wider text-white/50 uppercase rtl:tracking-normal rtl:normal-case rtl:text-xs">{{ g.label | transloco }}</p> }
+          <ul class="space-y-0.5">
+            @for (i of g.items; track i.path) {
+              <li>
+                <a [routerLink]="i.path" routerLinkActive="bg-white/15 text-white shadow-inner" [routerLinkActiveOptions]="{ exact: !!i.exact }" (click)="menuOpen.set(false)"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/80 transition hover:bg-white/10 hover:text-white">
+                  <app-icon [name]="i.icon" class="text-lg" />{{ i.label | transloco }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </nav>
+    <div class="border-t border-white/10 p-3 text-xs text-white/60">
+      <a href="/" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-white/10 hover:text-white"><app-icon name="external-link" />{{ 'nav.viewSite' | transloco }}</a>
+    </div>
+  </aside>
+
+  <div class="flex min-w-0 flex-col">
+    <!-- Top bar -->
+    <header class="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface/90 px-4 py-2.5 backdrop-blur lg:px-8">
+      <button type="button" class="btn btn-ghost btn-icon lg:hidden" (click)="menuOpen.set(true)" [attr.aria-label]="'nav.openMenu' | transloco"><app-icon name="menu" class="text-xl" /></button>
+      <span class="flex-1"></span>
+
+      <div class="inline-flex rounded-lg border border-line-strong bg-canvas p-0.5" role="group" [attr.aria-label]="'common.languages' | transloco">
+        @for (l of langs; track l) {
+          <button type="button" class="rounded-md px-2.5 py-1 text-xs font-bold uppercase transition" [class]="lang.lang() === l ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-primary'"
+            [attr.aria-pressed]="lang.lang() === l" [attr.lang]="l" (click)="setLang(l)">{{ l }}</button>
+        }
+      </div>
+
+      <div class="relative">
+        <button type="button" class="flex items-center gap-2 rounded-lg px-2 py-1 transition hover:bg-primary-soft" (click)="userMenu.set(!userMenu())" [attr.aria-expanded]="userMenu()" aria-haspopup="menu">
+          <span class="grid size-8 place-items-center rounded-full bg-primary text-xs font-bold text-white">{{ initials() }}</span>
+          <span class="hidden text-start leading-tight sm:block"><span class="block text-sm font-semibold">{{ auth.user()?.fullName }}</span><span class="block text-xs text-muted">{{ 'roles.' + auth.user()?.role | transloco }}</span></span>
+          <app-icon name="chevron-down" class="text-muted" />
+        </button>
+        @if (userMenu()) {
+          <div class="fixed inset-0 z-30" (click)="userMenu.set(false)"></div>
+          <div role="menu" class="absolute end-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-lg border border-line bg-surface shadow-pop">
+            <div class="border-b border-line px-4 py-3 text-xs text-muted"><p class="truncate font-semibold text-ink">{{ auth.user()?.email }}</p></div>
+            <button type="button" role="menuitem" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm hover:bg-primary-soft" (click)="goProfile()"><app-icon name="user" />{{ 'nav.profile' | transloco }}</button>
+            <button type="button" role="menuitem" class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-danger hover:bg-danger-soft" (click)="logout()"><app-icon name="log-out" class="rtl:-scale-x-100" />{{ 'nav.logout' | transloco }}</button>
+          </div>
+        }
+      </div>
+    </header>
+
+    <main class="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8" id="main"><router-outlet /></main>
+  </div>
+</div>

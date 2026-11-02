@@ -1,0 +1,36 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "anagem-web",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4200",
+        "--directory",
+        "web"
+      ],
+      "port": 4200
+    },
+    {
+      "name": "anagem-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "frontend",
+        "run",
+        "start",
+        "--",
+        "--port",
+        "4300"
+      ],
+      "port": 4300,
+      "env": {
+        "API_TARGET": "http://127.0.0.1:18181",
+        "API_ORIGIN": "http://127.0.0.1:18181",
+        "PUBLIC_BASE_URL": "http://localhost:4300"
+      }
+    }
+  ]
+}

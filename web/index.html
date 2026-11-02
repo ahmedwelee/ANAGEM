@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANAGEM — Association Nationale des Géographes Marocains</title>
+<meta name="description" content="L'ANAGEM fédère les géographes marocains, produit et diffuse le savoir géographique, et contribue à l'éclairage des territoires et des politiques publiques.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ANAGEM — Association Nationale des Géographes Marocains">
+<meta property="og:description" content="La géographie au service du territoire et du développement durable.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/header.css">
+<link rel="stylesheet" href="css/hero.css">
+<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/footer.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">Aller au contenu principal</a>
+<header class="site-header">
+  <div class="topbar">
+    <div class="container topbar__in">
+      <ul class="topbar__contact">
+        <li><a href="mailto:contact@anagem.ma"><svg class="i"><use href="assets/icons.svg#mail"/></svg><span>contact@anagem.ma</span></a></li>
+        <li><a href="tel:+212537000000"><svg class="i"><use href="assets/icons.svg#phone"/></svg><span dir="ltr">+212 5 37 00 00 00</span></a></li>
+        <li><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="topbar.location">Rabat, Maroc</span></li>
+      </ul>
+      <div class="topbar__tools">
+        <div class="lang" role="group" aria-label="Langue" data-i18n-attr="aria-label:lang.label">
+          <button class="lang__btn" type="button" data-lang="fr" lang="fr">Français</button>
+          <button class="lang__btn" type="button" data-lang="ar" lang="ar">العربية</button>
+          <button class="lang__btn" type="button" data-lang="en" lang="en">English</button>
+        </div>
+        <form class="search" role="search" data-soon>
+          <svg class="i"><use href="assets/icons.svg#search"/></svg>
+          <input type="search" name="q" placeholder="Rechercher..." aria-label="Rechercher sur le site" data-i18n-attr="placeholder:search.placeholder aria-label:search.label">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="brandbar">
+    <div class="container">
+      <a class="brand" href="./" aria-label="ANAGEM — Accueil" data-i18n-attr="aria-label:brand.home">
+        <img class="brand__logo" src="assets/anagem-logo-white.png" width="84" height="84" alt="">
+        <span class="brand__sep" aria-hidden="true"></span>
+        <span class="brand__names">
+          <span class="brand__fr" lang="fr">Association Nationale des Géographes Marocains</span>
+          <span class="brand__ar" lang="ar" dir="rtl">الجمعية الوطنية للجغرافيين المغاربة</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <nav class="mainnav" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.label">
+    <div class="container mainnav__in">
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu" data-i18n-attr="aria-label:nav.menu">
+        <svg class="i burger__open"><use href="assets/icons.svg#menu"/></svg>
+        <svg class="i burger__close"><use href="assets/icons.svg#x"/></svg>
+      </button>
+      <ul class="menu" id="menu">
+        <li class="menu__item"><a class="menu__link is-active" href="./" aria-current="page" data-i18n="nav.home">Accueil</a></li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.association">L'association</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#a-propos" data-i18n="nav.association.about">Présentation et objectifs</a></li>
+            <li><a href="#" data-soon data-i18n="nav.association.organisation">Organisation et instances</a></li>
+            <li><a href="#" data-soon data-i18n="nav.association.statutes">Statuts</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.publications">Publications</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#revue" data-i18n="nav.publications.magazine">Revue Géographie du Maroc</a></li>
+            <li><a href="#" data-soon data-i18n="nav.publications.books">Ouvrages et actes</a></li>
+            <li><a href="#" data-soon data-i18n="nav.publications.archive">Archives</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.events">Colloques &amp; Événements</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#evenements" data-i18n="nav.events.upcoming">Événements à venir</a></li>
+            <li><a href="#" data-soon data-i18n="nav.events.past">Événements passés</a></li>
+            <li><a href="#colloque" data-i18n="nav.events.featured">Rencontre nationale</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.members">Membres</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#adhesion" data-i18n="nav.members.join">Adhésion</a></li>
+            <li><a href="#espace-membres" data-i18n="nav.members.space">Espace membres</a></li>
+            <li><a href="#" data-soon data-i18n="nav.members.directory">Annuaire</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.resources">Ressources</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#" data-soon data-i18n="nav.resources.docs">Documents scientifiques</a></li>
+            <li><a href="#" data-soon data-i18n="nav.resources.maps">Cartes</a></li>
+            <li><a href="#" data-soon data-i18n="nav.resources.links">Liens utiles</a></li>
+          </ul>
+        </li>
+        <li class="menu__item"><a class="menu__link" href="#contact" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
+<main id="main">
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__text">
+    <div class="hero__bg" style="background-image:url(assets/img/village.jpg)"></div>
+    <div class="hero__veil"></div>
+    <div class="hero__content">
+      <h1 id="hero-title" class="hero__title" data-i18n="hero.title">La géographie au service du territoire et du développement durable</h1>
+      <p class="hero__desc" data-i18n="hero.desc">L'ANAGEM fédère les géographes marocains, produit et diffuse le savoir géographique, et contribue à l'éclairage des territoires et des politiques publiques.</p>
+      <div class="hero__cta">
+        <a class="btn btn--accent" href="#a-propos"><span data-i18n="hero.cta1">Découvrir l'association</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a>
+        <a class="btn btn--ghost" href="#revue" data-i18n="hero.cta2">Voir nos publications</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__map">
+    <div id="map-root" role="img" aria-label="Carte schématique du Maroc" data-i18n-attr="aria-label:hero.map"></div>
+    <p class="hero__map-note" data-i18n="hero.mapnote">Carte schématique — à remplacer par la cartographie officielle</p>
+  </div>
+
+  <aside class="hero__side">
+    <div class="hero__side-bg" style="background-image:url(assets/img/beach.jpg)"></div>
+    <div class="hero__side-veil"></div>
+    <p class="hero__side-text" data-i18n="hero.side">Comprendre les territoires pour construire demain</p>
+  </aside>
+</section>
+
+<section class="quick container" aria-label="Accès rapide" data-i18n-attr="aria-label:quick.label">
+  <ul class="quick__grid">
+    <li class="reveal" style="--d:0"><a class="qcard" href="#a-propos"><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#users"/></svg></span><strong data-i18n="quick.association.t">L'association</strong><span data-i18n="quick.association.d">Historique, statuts, instances</span></a></li>
+    <li class="reveal" style="--d:1"><a class="qcard" href="#revue"><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#book-open"/></svg></span><strong data-i18n="quick.publications.t">Publications</strong><span data-i18n="quick.publications.d">Revue, ouvrages, actes</span></a></li>
+    <li class="reveal" style="--d:2"><a class="qcard" href="#evenements"><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#calendar-days"/></svg></span><strong data-i18n="quick.events.t">Colloques &amp; Événements</strong><span data-i18n="quick.events.d">Actualités, inscriptions</span></a></li>
+    <li class="reveal" style="--d:3"><a class="qcard" href="#adhesion"><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#users"/></svg></span><strong data-i18n="quick.members.t">Membres</strong><span data-i18n="quick.members.d">Annuaire, adhésion</span></a></li>
+    <li class="reveal" style="--d:4"><a class="qcard" href="#" data-soon><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#file-text"/></svg></span><strong data-i18n="quick.resources.t">Ressources</strong><span data-i18n="quick.resources.d">Documents, liens utiles</span></a></li>
+    <li class="reveal" style="--d:5"><a class="qcard" href="#contact"><span class="qcard__icon"><svg class="i"><use href="assets/icons.svg#mail"/></svg></span><strong data-i18n="quick.contact.t">Contact</strong><span data-i18n="quick.contact.d">Nous écrire</span></a></li>
+  </ul>
+</section>
+<section class="trio container" id="actualites">
+  <div class="trio__col">
+    <div class="sec-head">
+      <h2><svg class="i"><use href="assets/icons.svg#megaphone"/></svg><span data-i18n="news.title">Actualités</span></h2>
+      <a class="link-arrow" href="#" data-soon><span data-i18n="news.all">Toutes les actualités</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a>
+    </div>
+    <ul class="news">
+      <li class="news-card reveal" style="--d:0">
+        <a class="news-card__img" href="#" data-soon tabindex="-1" aria-hidden="true"><img src="assets/img/forest.jpg" alt="" width="640" height="546" loading="lazy"></a>
+        <div class="news-card__body">
+          <div class="news-card__meta"><span class="chip" data-i18n="cat.events">Événements</span><time datetime="2026-10-12" data-date="2026-10-12">12 octobre 2026</time></div>
+          <h3><a href="#" data-soon data-i18n="news.1.t">Appel à communications – Colloque ANAGEM / FSHS</a></h3>
+          <p data-i18n="news.1.d">Mobiliser le territoire pour penser le développement dans une perspective durable et inclusive : regards géographiques.</p>
+        </div>
+      </li>
+      <li class="news-card reveal" style="--d:1">
+        <a class="news-card__img news-card__img--cover" href="#" data-soon tabindex="-1" aria-hidden="true"><span class="mini-cover"><b>Géographie<br>du Maroc</b><i>N° 12</i></span></a>
+        <div class="news-card__body">
+          <div class="news-card__meta"><span class="chip" data-i18n="cat.publications">Publications</span><time datetime="2026-10-03" data-date="2026-10-03">3 octobre 2026</time></div>
+          <h3><a href="#" data-soon data-i18n="news.2.t">Publication du numéro 12 de la revue ANAGEM</a></h3>
+          <p data-i18n="news.2.d">Territoires, sociétés et environnement.</p>
+        </div>
+      </li>
+      <li class="news-card reveal" style="--d:2">
+        <a class="news-card__img" href="#" data-soon tabindex="-1" aria-hidden="true"><img src="assets/img/tower.jpg" alt="" width="465" height="1400" loading="lazy" style="object-position:50% 18%"></a>
+        <div class="news-card__body">
+          <div class="news-card__meta"><span class="chip" data-i18n="cat.association">Association</span><time datetime="2026-09-28" data-date="2026-09-28">28 septembre 2026</time></div>
+          <h3><a href="#" data-soon data-i18n="news.3.t">Adhésion en ligne : rejoignez l'ANAGEM !</a></h3>
+          <p data-i18n="news.3.d">Ensemble pour une géographie au service des territoires.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="trio__col" id="evenements">
+    <div class="sec-head">
+      <h2><svg class="i"><use href="assets/icons.svg#calendar-days"/></svg><span data-i18n="events.title">Événements à venir</span></h2>
+      <a class="link-arrow" href="#" data-soon><span data-i18n="events.all">Voir l'agenda</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a>
+    </div>
+    <ul class="events" id="events-list">
+      <li class="event" data-start="2026-10-14" data-end="2026-10-14">
+        <a href="#" data-soon>
+          <span class="event__date"></span>
+          <span class="event__body"><strong data-i18n="ev.1.t">Conseil de l'ANAGEM</strong><span class="event__place"><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="ev.1.p">Rabat – Siège de l'association</span></span><span class="event__time"><svg class="i"><use href="assets/icons.svg#clock"/></svg><span dir="ltr">10:00 – 15:00</span></span></span>
+          <span class="event__status"></span>
+        </a>
+      </li>
+      <li class="event" data-start="2026-10-14" data-end="2026-10-15">
+        <a href="#colloque">
+          <span class="event__date"></span>
+          <span class="event__body"><strong data-i18n="ev.2.t">Colloque ANAGEM / FSHS</strong><span class="event__desc" data-i18n="ev.2.d">Mobiliser le territoire pour penser le développement dans une perspective durable et inclusive</span><span class="event__place"><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="ev.2.p">Kénitra</span></span></span>
+          <span class="event__status"></span>
+        </a>
+      </li>
+      <li class="event" data-start="2026-11-22" data-end="2026-11-22">
+        <a href="#" data-soon>
+          <span class="event__date"></span>
+          <span class="event__body"><strong data-i18n="ev.3.t">Séminaire doctoral</strong><span class="event__desc" data-i18n="ev.3.d">Dynamiques territoriales et gouvernance</span><span class="event__place"><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="ev.3.p">Rabat</span></span></span>
+          <span class="event__status"></span>
+        </a>
+      </li>
+      <li class="event" data-start="2026-12-12" data-end="2026-12-13">
+        <a href="#" data-soon>
+          <span class="event__date"></span>
+          <span class="event__body"><strong data-i18n="ev.4.t">Journées d'étude</strong><span class="event__desc" data-i18n="ev.4.d">Géomatique et territoires</span><span class="event__place"><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="ev.4.p">Rabat</span></span></span>
+          <span class="event__status"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <aside class="trio__col trio__col--mag" id="revue" aria-labelledby="mag-title">
+    <div class="mag reveal reveal--right">
+      <p class="mag__kicker" data-i18n="mag.kicker">Revue de l'ANAGEM</p>
+      <div class="mag__cover" aria-hidden="true">
+        <svg class="mag__lines" viewBox="0 0 200 280" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor" stroke-width=".7"><path d="M-10 210c30-30 60 0 90-20s50-50 130-30"/><path d="M-10 190c30-30 60 0 90-20s50-50 130-30"/><path d="M-10 170c30-30 60 0 90-20s50-50 130-30"/><path d="M-10 150c30-30 60 0 90-20s50-50 130-30"/><path d="M-10 230c30-30 60 0 90-20s50-50 130-30"/></g></svg>
+        <span class="mag__cover-logo"><img src="assets/anagem-logo-white.png" alt="" width="44" height="44"></span>
+        <span class="mag__cover-title">Géographie<br>du Maroc</span>
+        <span class="mag__cover-no">N° 12 · 2026</span>
+      </div>
+      <h3 id="mag-title" class="mag__issue" data-i18n="mag.issue">Numéro 12 – 2026</h3>
+      <p class="mag__sub" data-i18n="mag.sub">Territoires, sociétés et environnement</p>
+      <div class="mag__actions">
+        <a class="btn btn--outline btn--sm" href="#" data-soon><svg class="i"><use href="assets/icons.svg#download"/></svg><span data-i18n="mag.pdf">Télécharger le PDF</span></a>
+        <a class="btn btn--ghost btn--sm" href="#" data-soon data-i18n="mag.more">En savoir plus</a>
+      </div>
+    </div>
+  </aside>
+</section>
+<section class="feature container" aria-labelledby="feat-title">
+  <article class="feature__main reveal" id="colloque" data-start="2026-10-14" data-end="2026-10-15">
+    <div class="feature__media">
+      <div class="feature__photo" style="background-image:url(assets/img/forest.jpg)"></div>
+      <div id="map-mini" aria-hidden="true"></div>
+    </div>
+    <div class="feature__body">
+      <p class="feature__kicker"><span data-feature-label>Prochain colloque</span><span class="badge" data-feature-badge hidden></span></p>
+      <p class="feature__meta"><svg class="i"><use href="assets/icons.svg#calendar"/></svg><span data-feature-dates></span><span class="feature__dot" aria-hidden="true"></span><span data-i18n="feature.place">Kénitra</span></p>
+      <h2 id="feat-title" class="feature__title" data-i18n="feature.title">Mobiliser le territoire pour penser le développement dans une perspective durable et inclusive : regards géographiques</h2>
+      <p class="feature__host" data-i18n="feature.host">Faculté des Sciences Humaines et Sociales, Université Ibn Tofail – Kénitra</p>
+      <a class="btn btn--accent" href="assets/docs/programme-colloque-kenitra.pdf" target="_blank" rel="noopener"><span data-i18n="feature.cta">Consulter le programme</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a>
+    </div>
+  </article>
+
+  <aside class="axes reveal reveal--left" aria-labelledby="axes-title">
+    <h3 id="axes-title"><svg class="i"><use href="assets/icons.svg#compass"/></svg><span data-i18n="axes.title">Axes thématiques</span></h3>
+    <ul class="axes__list">
+      <li><span class="axes__ico"><svg class="i"><use href="assets/icons.svg#leaf"/></svg></span><span data-i18n="axes.1">Environnements naturels</span></li>
+      <li><span class="axes__ico"><svg class="i"><use href="assets/icons.svg#scale"/></svg></span><span data-i18n="axes.2">Inégalités territoriales</span></li>
+      <li><span class="axes__ico"><svg class="i"><use href="assets/icons.svg#landmark"/></svg></span><span data-i18n="axes.3">Gouvernance</span></li>
+      <li><span class="axes__ico"><svg class="i"><use href="assets/icons.svg#lightbulb"/></svg></span><span data-i18n="axes.4">Innovation</span></li>
+    </ul>
+    <p class="axes__where"><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="axes.where">Faculté des Sciences Humaines et Sociales, Université Ibn Tofail – Kénitra</span></p>
+    <a class="link-arrow" href="assets/docs/programme-colloque-kenitra.pdf" target="_blank" rel="noopener"><span data-i18n="axes.more">En savoir plus</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a>
+  </aside>
+</section>
+
+<section class="infocards container" aria-label="L'association">
+  <article class="icard reveal" id="a-propos" style="--d:0">
+    <span class="icard__icon"><svg class="i"><use href="assets/icons.svg#users"/></svg></span>
+    <div><h3 data-i18n="about.t">À propos de l'ANAGEM</h3><p data-i18n="about.d">L'ANAGEM rassemble les géographes marocains et toutes celles et ceux qui s'intéressent à la géographie. Elle diffuse l'information sur la géographie du Maroc et organise conférences, séminaires, journées d'étude, voyages et expositions.</p>
+    <a class="btn btn--sm" href="#" data-soon><span data-i18n="about.cta">Découvrir l'association</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a></div>
+  </article>
+  <article class="icard reveal" id="adhesion" style="--d:1">
+    <span class="icard__icon"><svg class="i"><use href="assets/icons.svg#user-plus"/></svg></span>
+    <div><h3 data-i18n="join.t">Adhésion</h3><p data-i18n="join.d">Rejoignez notre réseau et participez à la dynamique scientifique de l'ANAGEM. Les statuts prévoient plusieurs catégories de membres : actifs, correspondants, d'honneur et étudiants.</p>
+    <a class="btn btn--sm" href="#" data-soon><span data-i18n="join.cta">Adhérer en ligne</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a></div>
+  </article>
+  <article class="icard reveal" id="espace-membres" style="--d:2">
+    <span class="icard__icon"><svg class="i"><use href="assets/icons.svg#lock"/></svg></span>
+    <div><h3 data-i18n="space.t">Espace membres</h3><p data-i18n="space.d">Accédez à votre espace personnel pour gérer votre profil, consulter les ressources et suivre les actualités.</p>
+    <a class="btn btn--sm" href="#" data-soon><span data-i18n="space.cta">Se connecter</span><svg class="i i-arrow i-flip"><use href="assets/icons.svg#arrow-right"/></svg></a></div>
+  </article>
+</section>
+
+<section class="partners container" aria-labelledby="partners-title">
+  <h2 id="partners-title" class="partners__title" data-i18n="partners.title">Nos partenaires</h2>
+  <ul class="partners__grid">
+    <li class="partner reveal" style="--d:0"><svg class="i"><use href="assets/icons.svg#building"/></svg><span data-i18n="partners.1">Université Ibn Tofail – Kénitra</span></li>
+    <li class="partner reveal" style="--d:1"><svg class="i"><use href="assets/icons.svg#building"/></svg><span data-i18n="partners.2">Faculté des Sciences Humaines et Sociales – Kénitra</span></li>
+    <li class="partner reveal" style="--d:2"><svg class="i"><use href="assets/icons.svg#building"/></svg><span data-i18n="partners.3">Centre National pour la Recherche Scientifique et Technique</span></li>
+    <li class="partner reveal" style="--d:3"><svg class="i"><use href="assets/icons.svg#building"/></svg><span data-i18n="partners.4">Laboratoire Aménagement du territoire, Géo-environnement et Développement</span></li>
+    <li class="partner partner--empty reveal" style="--d:4"><svg class="i"><use href="assets/icons.svg#shield-check"/></svg><span data-i18n="partners.empty">Partenaire institutionnel</span></li>
+    <li class="partner partner--empty reveal" style="--d:5"><svg class="i"><use href="assets/icons.svg#shield-check"/></svg><span data-i18n="partners.empty">Partenaire institutionnel</span></li>
+  </ul>
+</section>
+</main>
+<footer class="site-footer" id="contact">
+  <svg class="footer__contours" viewBox="0 0 600 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><path d="M0 250c80-60 150 10 240-30s130-110 360-70"/><path d="M0 225c80-60 150 10 240-30s130-110 360-70"/><path d="M0 200c80-60 150 10 240-30s130-110 360-70"/><path d="M0 175c80-60 150 10 240-30s130-110 360-70"/><path d="M0 275c80-60 150 10 240-30s130-110 360-70"/></g></svg>
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <img src="assets/anagem-logo-white.png" width="72" height="72" alt="ANAGEM">
+      <div>
+        <strong>ANAGEM</strong>
+        <span lang="fr">Association Nationale des Géographes Marocains</span>
+        <span lang="ar" dir="rtl">الجمعية الوطنية للجغرافيين المغاربة</span>
+      </div>
+    </div>
+    <nav aria-label="Navigation" data-i18n-attr="aria-label:footer.nav">
+      <h4 data-i18n="footer.nav">Navigation</h4>
+      <ul>
+        <li><a href="./" data-i18n="nav.home">Accueil</a></li>
+        <li><a href="#a-propos" data-i18n="nav.association">L'association</a></li>
+        <li><a href="#revue" data-i18n="nav.publications">Publications</a></li>
+        <li><a href="#evenements" data-i18n="nav.events">Colloques &amp; Événements</a></li>
+        <li><a href="#adhesion" data-i18n="nav.members">Membres</a></li>
+        <li><a href="#" data-soon data-i18n="nav.resources">Ressources</a></li>
+        <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div>
+      <h4 data-i18n="footer.social">Réseaux sociaux</h4>
+      <ul class="social">
+        <li><a href="#" data-soon aria-label="LinkedIn"><svg class="i"><use href="assets/icons.svg#linkedin"/></svg></a></li>
+        <li><a href="#" data-soon aria-label="Facebook"><svg class="i"><use href="assets/icons.svg#facebook"/></svg></a></li>
+        <li><a href="#" data-soon aria-label="X"><svg class="i"><use href="assets/icons.svg#x-social"/></svg></a></li>
+        <li><a href="#" data-soon aria-label="YouTube"><svg class="i"><use href="assets/icons.svg#youtube"/></svg></a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footer.contact">Nous contacter</h4>
+      <ul class="footer__contact">
+        <li><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="topbar.location">Rabat, Maroc</span></li>
+        <li><svg class="i"><use href="assets/icons.svg#mail"/></svg><a href="mailto:contact@anagem.ma">contact@anagem.ma</a></li>
+        <li><svg class="i"><use href="assets/icons.svg#phone"/></svg><a href="tel:+212537000000" dir="ltr">+212 5 37 00 00 00</a></li>
+      </ul>
+    </div>
+    <p class="footer__tag" data-i18n="footer.tag">Ensemble pour les territoires de demain</p>
+  </div>
+  <div class="footer__bottom">
+    <div class="container footer__bottom-in">
+      <small data-i18n="footer.rights">© 2026 ANAGEM. Tous droits réservés.</small>
+      <ul>
+        <li><a href="#" data-soon data-i18n="footer.legal">Mentions légales</a></li>
+        <li><a href="#" data-soon data-i18n="footer.privacy">Protection des données</a></li>
+        <li><a href="#" data-soon data-i18n="footer.sitemap">Plan du site</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+<div class="toast" role="status" aria-live="polite" hidden></div>
+<script src="js/map.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

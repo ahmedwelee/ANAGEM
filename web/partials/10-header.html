@@ -1,0 +1,88 @@
+<header class="site-header">
+  <div class="topbar">
+    <div class="container topbar__in">
+      <ul class="topbar__contact">
+        <li><a href="mailto:contact@anagem.ma"><svg class="i"><use href="assets/icons.svg#mail"/></svg><span>contact@anagem.ma</span></a></li>
+        <li><a href="tel:+212537000000"><svg class="i"><use href="assets/icons.svg#phone"/></svg><span dir="ltr">+212 5 37 00 00 00</span></a></li>
+        <li><svg class="i"><use href="assets/icons.svg#map-pin"/></svg><span data-i18n="topbar.location">Rabat, Maroc</span></li>
+      </ul>
+      <div class="topbar__tools">
+        <div class="lang" role="group" aria-label="Langue" data-i18n-attr="aria-label:lang.label">
+          <button class="lang__btn" type="button" data-lang="fr" lang="fr">Français</button>
+          <button class="lang__btn" type="button" data-lang="ar" lang="ar">العربية</button>
+          <button class="lang__btn" type="button" data-lang="en" lang="en">English</button>
+        </div>
+        <form class="search" role="search" data-soon>
+          <svg class="i"><use href="assets/icons.svg#search"/></svg>
+          <input type="search" name="q" placeholder="Rechercher..." aria-label="Rechercher sur le site" data-i18n-attr="placeholder:search.placeholder aria-label:search.label">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="brandbar">
+    <div class="container">
+      <a class="brand" href="./" aria-label="ANAGEM — Accueil" data-i18n-attr="aria-label:brand.home">
+        <img class="brand__logo" src="assets/anagem-logo-white.png" width="84" height="84" alt="">
+        <span class="brand__sep" aria-hidden="true"></span>
+        <span class="brand__names">
+          <span class="brand__fr" lang="fr">Association Nationale des Géographes Marocains</span>
+          <span class="brand__ar" lang="ar" dir="rtl">الجمعية الوطنية للجغرافيين المغاربة</span>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <nav class="mainnav" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.label">
+    <div class="container mainnav__in">
+      <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu" data-i18n-attr="aria-label:nav.menu">
+        <svg class="i burger__open"><use href="assets/icons.svg#menu"/></svg>
+        <svg class="i burger__close"><use href="assets/icons.svg#x"/></svg>
+      </button>
+      <ul class="menu" id="menu">
+        <li class="menu__item"><a class="menu__link is-active" href="./" aria-current="page" data-i18n="nav.home">Accueil</a></li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.association">L'association</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#a-propos" data-i18n="nav.association.about">Présentation et objectifs</a></li>
+            <li><a href="#" data-soon data-i18n="nav.association.organisation">Organisation et instances</a></li>
+            <li><a href="#" data-soon data-i18n="nav.association.statutes">Statuts</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.publications">Publications</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#revue" data-i18n="nav.publications.magazine">Revue Géographie du Maroc</a></li>
+            <li><a href="#" data-soon data-i18n="nav.publications.books">Ouvrages et actes</a></li>
+            <li><a href="#" data-soon data-i18n="nav.publications.archive">Archives</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.events">Colloques &amp; Événements</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#evenements" data-i18n="nav.events.upcoming">Événements à venir</a></li>
+            <li><a href="#" data-soon data-i18n="nav.events.past">Événements passés</a></li>
+            <li><a href="#colloque" data-i18n="nav.events.featured">Rencontre nationale</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.members">Membres</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#adhesion" data-i18n="nav.members.join">Adhésion</a></li>
+            <li><a href="#espace-membres" data-i18n="nav.members.space">Espace membres</a></li>
+            <li><a href="#" data-soon data-i18n="nav.members.directory">Annuaire</a></li>
+          </ul>
+        </li>
+        <li class="menu__item has-sub">
+          <button class="menu__link" type="button" aria-expanded="false" aria-haspopup="true"><span data-i18n="nav.resources">Ressources</span><svg class="i"><use href="assets/icons.svg#chevron-down"/></svg></button>
+          <ul class="submenu">
+            <li><a href="#" data-soon data-i18n="nav.resources.docs">Documents scientifiques</a></li>
+            <li><a href="#" data-soon data-i18n="nav.resources.maps">Cartes</a></li>
+            <li><a href="#" data-soon data-i18n="nav.resources.links">Liens utiles</a></li>
+          </ul>
+        </li>
+        <li class="menu__item"><a class="menu__link" href="#contact" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>

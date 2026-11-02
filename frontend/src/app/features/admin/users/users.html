@@ -1,0 +1,93 @@
+<app-page-header title="users.title" subtitle="users.subtitle">
+  @if (tab() === 'users' && canUsers()) { <button type="button" class="btn btn-primary" (click)="openCreate()"><app-icon name="plus" />{{ 'users.new' | transloco }}</button> }
+  @if (tab() === 'roles' && canRoles()) { <button type="button" class="btn btn-primary" [disabled]="!dirtyRoles().length || savingRoles()" (click)="saveRoles()"><app-icon [name]="savingRoles() ? 'loader-circle' : 'save'" [class.animate-spin]="savingRoles()" />{{ 'common.save' | transloco }}</button> }
+</app-page-header>
+
+<div class="card overflow-hidden">
+  <div class="tabs px-3 pt-2" role="tablist">
+    @if (canUsers()) { <button type="button" role="tab" class="tab" [attr.aria-selected]="tab() === 'users'" (click)="tab.set('users')"><app-icon name="users" />{{ 'users.tabUsers' | transloco }}</button> }
+    @if (canRoles()) { <button type="button" role="tab" class="tab" [attr.aria-selected]="tab() === 'roles'" (click)="tab.set('roles')"><app-icon name="shield-check" />{{ 'users.tabRoles' | transloco }}</button> }
+  </div>
+
+  @if (error(); as e) {
+    <app-error-state [message]="e.message" (retry)="load()" />
+  } @else if (loading()) {
+    <app-skeleton-rows [rows]="5" />
+  } @else if (tab() === 'users') {
+    <div class="overflow-x-auto">
+      <table class="tbl">
+        <thead><tr><th>{{ 'users.colUser' | transloco }}</th><th>{{ 'users.role' | transloco }}</th><th>{{ 'common.status' | transloco }}</th><th class="hidden md:table-cell">{{ 'users.lastLogin' | transloco }}</th><th class="w-32"><span class="sr-only">{{ 'common.actions' | transloco }}</span></th></tr></thead>
+        <tbody>
+          @for (u of users(); track u.id) {
+            <tr>
+              <td><span class="font-semibold text-primary-dark">{{ u.fullName }}</span>@if (isSelf(u)) { <span class="badge badge-info ms-2">{{ 'users.you' | transloco }}</span> }<span class="block text-xs text-muted" dir="ltr">{{ u.email }}</span></td>
+              <td><span class="badge badge-info">{{ 'roles.' + u.role | transloco }}</span></td>
+              <td><span class="badge" [class]="u.enabled ? 'badge-published' : 'badge-draft'">{{ (u.enabled ? 'common.active' : 'common.inactive') | transloco }}</span></td>
+              <td class="hidden md:table-cell text-muted">{{ u.lastLoginAt | appDate: 'datetime' }}</td>
+              <td>
+                <span class="flex justify-end gap-1">
+                  <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="openEdit(u)" [attr.aria-label]="'common.edit' | transloco"><app-icon name="pencil" /></button>
+                  <button type="button" class="btn btn-ghost btn-icon btn-sm" (click)="openReset(u)" [attr.aria-label]="'users.resetPassword' | transloco" [attr.title]="'users.resetPassword' | transloco"><app-icon name="key-round" /></button>
+                  @if (!isSelf(u)) { <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" (click)="remove(u)" [attr.aria-label]="'common.delete' | transloco"><app-icon name="trash-2" /></button> }
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p class="border-b border-line bg-canvas px-5 py-3 text-sm text-muted">{{ 'users.rolesHint' | transloco }}</p>
+    <div class="overflow-x-auto">
+      <table class="tbl">
+        <thead><tr><th>{{ 'users.permission' | transloco }}</th>@for (r of roles(); track r.id) { <th class="text-center">{{ 'roles.' + r.name | transloco }}</th> }</tr></thead>
+        <tbody>
+          @for (p of permissions(); track p.code) {
+            <tr>
+              <td><span class="font-semibold">{{ 'perm.' + p.code | transloco }}</span><span class="block font-mono text-[11px] text-muted" dir="ltr">{{ p.code }}</span></td>
+              @for (r of roles(); track r.id) {
+                <td class="text-center"><input type="checkbox" class="check" [checked]="has(r.id, p.code)" [disabled]="r.name === 'SUPER_ADMIN' || !canRoles()" (change)="toggle(r, p.code, $any($event.target).checked)" [attr.aria-label]="('roles.' + r.name | transloco) + ': ' + p.code" /></td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<app-modal [open]="!!modal()" [title]="modal()?.kind === 'create' ? 'users.new' : modal()?.kind === 'reset' ? 'users.resetPassword' : 'users.edit'" width="32rem" (closed)="modal.set(null)">
+  <app-api-error-banner [error]="formError()" />
+  <form [formGroup]="userForm" id="user-form" (ngSubmit)="submit()" novalidate class="space-y-4">
+    @if (modal()?.kind !== 'reset') {
+      <div><label class="label" for="ue">{{ 'common.email' | transloco }}</label><input id="ue" class="input" type="email" dir="ltr" formControlName="email" /><app-field-error [control]="userForm.controls.email" /></div>
+      <div><label class="label" for="un">{{ 'users.fullName' | transloco }}</label><input id="un" class="input" formControlName="fullName" maxlength="150" /><app-field-error [control]="userForm.controls.fullName" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="label" for="ur">{{ 'users.role' | transloco }}</label>
+          <select id="ur" class="input" formControlName="roleName" [attr.disabled]="isSelfEdit() ? '' : null">@for (r of roles(); track r.id) { <option [value]="r.name">{{ 'roles.' + r.name | transloco }}</option> }</select></div>
+        <div><label class="label" for="ul">{{ 'users.language' | transloco }}</label>
+          <select id="ul" class="input" formControlName="preferredLocale"><option value="fr">Français</option><option value="ar">العربية</option><option value="en">English</option></select></div>
+      </div>
+      @if (modal()?.kind === 'edit') { <label class="flex items-center gap-3 text-sm"><input type="checkbox" class="check" formControlName="enabled" /><span class="font-semibold">{{ 'users.enabled' | transloco }}</span></label> }
+    } @else {
+      <p class="text-sm text-muted">{{ 'users.resetHint' | transloco }}</p>
+    }
+    @if (modal()?.kind !== 'edit') {
+      <div>
+        <label class="label" for="up">{{ 'users.password' | transloco }}</label>
+        <div class="flex gap-2">
+          <input id="up" class="input font-mono" dir="ltr" [type]="showPw() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" />
+          <button type="button" class="btn btn-secondary btn-icon" (click)="showPw.set(!showPw())" [attr.aria-label]="'login.show' | transloco"><app-icon [name]="showPw() ? 'eye-off' : 'eye'" /></button>
+          <button type="button" class="btn btn-secondary btn-icon" (click)="regenerate()" [attr.aria-label]="'users.generate' | transloco" [attr.title]="'users.generate' | transloco"><app-icon name="refresh-cw" /></button>
+          <button type="button" class="btn btn-secondary btn-icon" (click)="copyPw()" [attr.aria-label]="'common.copy' | transloco"><app-icon name="copy" /></button>
+        </div>
+        <app-field-error [control]="userForm.controls.password" />
+        <p class="hint">{{ 'users.passwordHint' | transloco }}</p>
+      </div>
+    }
+  </form>
+  <ng-container modal-footer>
+    <button type="button" class="btn btn-secondary" (click)="modal.set(null)">{{ 'common.cancel' | transloco }}</button>
+    <button type="submit" form="user-form" class="btn btn-primary" [disabled]="saving()">@if (saving()) { <app-icon name="loader-circle" class="animate-spin" /> }{{ 'common.save' | transloco }}</button>
+  </ng-container>
+</app-modal>

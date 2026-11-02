@@ -1,0 +1,87 @@
+<app-page-header title="dashboard.title" subtitle="dashboard.subtitle">
+  @if (auth.can('CONTENT_WRITE')) {
+    <a routerLink="/admin/news/new" class="btn btn-primary"><app-icon name="plus" />{{ 'dashboard.newArticle' | transloco }}</a>
+    <a routerLink="/admin/events/new" class="btn btn-secondary"><app-icon name="calendar-days" />{{ 'dashboard.newEvent' | transloco }}</a>
+  }
+  @if (auth.can('MEDIA_UPLOAD')) { <a routerLink="/admin/media" class="btn btn-secondary"><app-icon name="upload" />{{ 'dashboard.upload' | transloco }}</a> }
+</app-page-header>
+
+<p class="-mt-3 mb-6 text-sm text-muted">{{ 'dashboard.welcome' | transloco: { name: firstName() } }}</p>
+
+@if (error(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (!stats()) {
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">@for (i of [1,2,3,4,5,6,7,8]; track i) { <div class="skeleton h-28 rounded-card"></div> }</div>
+  <div class="mt-6 grid gap-4 lg:grid-cols-3"><div class="skeleton h-72 rounded-card lg:col-span-2"></div><div class="skeleton h-72 rounded-card"></div></div>
+} @else {
+  <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" [attr.aria-label]="'dashboard.title' | transloco">
+    @for (c of cards(); track c.label) {
+      @let inner = c;
+      <a [routerLink]="c.link" class="card card-pad group flex items-start gap-4 transition hover:-translate-y-0.5 hover:shadow-card hover:border-line-strong" [class.pointer-events-none]="!c.link">
+        <span class="grid size-11 shrink-0 place-items-center rounded-xl text-xl"
+          [class]="c.tone === 'accent' ? 'bg-accent-soft text-accent' : c.tone === 'warn' ? 'bg-warn-soft text-warn' : 'bg-primary-soft text-primary'"><app-icon [name]="c.icon" /></span>
+        <span class="min-w-0">
+          <span class="block text-3xl leading-none font-extrabold text-primary-dark tabular-nums">{{ inner.value }}</span>
+          <span class="mt-1.5 block text-sm font-semibold text-ink">{{ c.label | transloco }}</span>
+          @if (c.hint) { <span class="block text-xs text-muted">{{ c.hint }}</span> }
+        </span>
+      </a>
+    }
+  </section>
+
+  <section class="mt-6 grid gap-4 lg:grid-cols-3">
+    <div class="card card-pad lg:col-span-2">
+      <h2 class="section-title mb-4">{{ 'dashboard.newsPerMonth' | transloco }}</h2>
+      @if (monthChart(); as cfg) { <app-chart class="h-64" [config]="cfg" [label]="'dashboard.newsPerMonth' | transloco" /> }
+    </div>
+    <div class="card card-pad">
+      <h2 class="section-title mb-4">{{ 'dashboard.newsByStatus' | transloco }}</h2>
+      @if (statusChart(); as cfg) { <app-chart class="h-64" [config]="cfg" [label]="'dashboard.newsByStatus' | transloco" /> }
+      @else { <app-empty-state icon="newspaper" title="dashboard.noNews" /> }
+    </div>
+  </section>
+
+  <section class="mt-6 grid gap-4 lg:grid-cols-2">
+    <div class="card">
+      <div class="flex items-center justify-between border-b border-line px-5 py-3.5">
+        <h2 class="section-title flex items-center gap-2"><app-icon name="languages" class="text-primary" />{{ 'dashboard.translationGaps' | transloco }}</h2>
+        @if (gapTotal() > 0) { <span class="badge badge-review">{{ gapTotal() }}</span> }
+      </div>
+      @if (gaps().length === 0) {
+        <app-empty-state icon="circle-check" title="dashboard.allTranslated" />
+      } @else {
+        <ul class="divide-y divide-line">
+          @for (g of gaps(); track g.type + g.id) {
+            <li>
+              <a [routerLink]="g.route" class="flex items-center gap-3 px-5 py-3 text-sm transition hover:bg-primary-light/60">
+                <span class="badge badge-info shrink-0">{{ 'nav.' + g.type | transloco }}</span>
+                <span class="min-w-0 flex-1 truncate font-medium">{{ g.title }}</span>
+                <span class="flex gap-1" dir="ltr">@for (l of g.missingLocales; track l) { <span class="rounded border border-dashed border-line-strong px-1 text-[10px] font-bold text-muted uppercase">{{ l }}</span> }</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="card">
+      <div class="border-b border-line px-5 py-3.5"><h2 class="section-title flex items-center gap-2"><app-icon name="history" class="text-primary" />{{ 'dashboard.recentActivity' | transloco }}</h2></div>
+      @if (activity().length === 0) {
+        <app-empty-state icon="history" title="dashboard.noActivity" />
+      } @else {
+        <ul class="divide-y divide-line">
+          @for (a of activity(); track a.id) {
+            <li class="flex items-start gap-3 px-5 py-3 text-sm">
+              <span class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-primary-soft text-primary"><app-icon [name]="activityIcon(a.action)" /></span>
+              <span class="min-w-0 flex-1">
+                <span class="block truncate font-medium">{{ 'audit.action.' + a.action | transloco }}@if (a.resourceType) { <span class="font-normal text-muted"> · {{ a.resourceType }}</span> }</span>
+                @if (a.summary && a.action !== 'LOGIN' && a.action !== 'LOGOUT') { <span class="block truncate text-xs text-muted">{{ a.summary }}</span> }
+                <span class="block text-xs text-muted">{{ a.actorEmail }} · {{ a.occurredAt | appDate: 'datetime' }}</span>
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
+}

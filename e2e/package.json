@@ -1,0 +1,16 @@
+{
+  "name": "anagem-e2e",
+  "private": true,
+  "description": "End-to-end browser tests: a real browser against the real backend, database and server-rendered site",
+  "scripts": {
+    "build:frontend": "npm --prefix ../frontend run build",
+    "test": "playwright test",
+    "test:build": "npm run build:frontend && playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6"
+  }
+}

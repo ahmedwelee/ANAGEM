@@ -1,0 +1,61 @@
+# ANAGEM — Requirements extracted from source documents
+
+Sources (kept unchanged in `docs/references/`):
+- `statutes/StatutANAGEM 2026.pdf` — Arabic statutes (القانون الأساسي), 3 pages, 9 articles.
+- `institutional-documents/programme-colloque-kenitra.pdf` — programme of the national meeting, Kénitra, 14–15 Oct 2026 (7 pages, AR + FR).
+- `website-reference-screenshot.jpg` — visual target. Logo: `assets/branding/anagem-logo-white.*` (white on transparent, for blue backgrounds).
+
+French wording below is a working translation of the Arabic statutes and must be validated before publication.
+
+## From the statutes
+
+| Art. | Content | Used for |
+|---|---|---|
+| 1 | One national organisation; seat at the Faculty of Letters and Human Sciences, Rabat; regional branches may be created, governed by internal rules | Contact/location, "branches" section |
+| 2 | Objectives: gather Moroccan geographers and those interested; collect and circulate information on the geography of Morocco; continuous training of members; exchange with geographers abroad and Arab-world associations; organise lectures, seminars, study days, trips, exhibitions; library exchange | About page, homepage "À propos" card |
+| 4 | No profit-making purpose | Legal notices |
+| 5 | Membership categories: honorary presidents/members, correspondent members (no vote), active members (annual fee set by the General Assembly), students (annual fee, no vote). Geographers join on application to the Secretary General; non-geographers need a positive vote of the national or regional bureau. Membership ends by resignation or expulsion (expulsion needs a 2/3 General Assembly vote) | Membership model + application workflow |
+| 6 | General Assembly each November; convened 15 days ahead; extraordinary session on request of 1/4 of active members. National Administrative Committee: 21–31 members, 3-year term. National Bureau: 9 members (President, Secretary General, Treasurer, Editor-in-chief of the journal, communication & documentation officer, exchange officer, trips officer, advisers), 3-year term, 1/3 renewed yearly | Organisation page, CMS roles |
+| 7 | Budget: membership fees, sales of publications, official support, accepted donations, income from trips | — |
+| 8 | Editorial board of the journal **Géographie du Maroc** (5–7 members) + scientific committee | Publications / magazine module |
+| 9 | Dissolution by 3/4 of members; books and journals go to the national libraries | — |
+
+## From the Kénitra programme (real, documented content)
+
+- *Rencontre nationale des géographes marocains* — **14–15 October 2026**, Kénitra.
+- Organisers: Faculté des Sciences Humaines et Sociales, Université Ibn Tofail (Kénitra) and ANAGEM; also shown: CNRST and the *Laboratoire Aménagement du territoire, Géo-environnement et Développement*.
+- Theme (FR): *Mobiliser le territoire pour penser le développement dans une perspective durable et inclusive — Regards géographiques.*
+- Theme (AR): *استثمار التراب للتفكير في التنمية وفق منظور مستدام ودامج: رؤى جغرافية*
+- Four thematic axes → homepage "Axes thématiques": natural environments & territorial integration; inequalities & fragmentation of spatial structures; public policy, governance & territorial justice; territorial innovation vs. local constraints.
+- Photos on the site are crops of the flyer's collage (`web/assets/img/`). Some still carry the flyer's white region outlines; replace with originals from the photographers/organisers.
+
+## Content that is NOT documented (sample content from the reference screenshot)
+
+This content exists **only with the `dev` profile** (records tagged `sample`, never in a production start). It mirrors the reference screenshot so the site can be reviewed with realistic density; replace it via the CMS before launch:
+
+| Item | Where | Status |
+|---|---|---|
+| News 1–3 (12 Oct, 3 Oct, 28 Sep 2026) | News list | Sample |
+| Events: Conseil (14 Oct), Séminaire doctoral (22 Nov), Journées d'étude (12–13 Dec) | Events list | Sample (the Kénitra colloque is real) |
+| "Numéro 12 – 2026" of the journal + cover | Magazine card | Sample; cover is a typographic placeholder |
+| contact@anagem.ma, +212 5 37 00 00 00 | Top bar, footer | Sample |
+| Social network links | Footer | Not set |
+| English name "Moroccan National Association of Geographers" | EN pages | Working translation |
+| Partner tiles 5–6 | Partners | Empty placeholders |
+| Morocco map | Hero | Schematic outline, **not official cartography** |
+
+## Open questions (institutional decisions needed)
+
+1. Official map: can ANAGEM provide the cartography (SVG) to use in the hero?
+2. Official contact details, postal address in Rabat, social accounts.
+3. Official English name of the association.
+4. Membership: annual fee amounts (set by the General Assembly), who validates online applications, whether a public member directory is allowed and with what consent.
+5. Are Université Ibn Tofail, FSHS, CNRST and the AGED laboratory standing partners, or only co-organisers of this one event? Logos needed.
+6. A clean, editable copy of the statutes (the supplied PDF has damaged Arabic text extraction) for the public Statutes page, plus French/English versions if they exist.
+7. Does the journal appear as "Géographie du Maroc" or "Revue ANAGEM" (the screenshot) on the site? The statutes say *Géographie du Maroc*.
+8. Names of current office holders for the organisation page (the programme names a president; confirm before publishing).
+9. Who needs which role in the CMS (the statutes define the bureau posts; map them to SUPER_ADMIN / ADMIN / EDITOR).
+10. Legal notices and data-protection text for the site (publisher identity, hosting provider, rights, contact for data requests). The pages exist and show a neutral "coming soon" message until ANAGEM writes them. Morocco's personal-data law (09-08 / CNDP) may require a declaration; ANAGEM should confirm with its adviser.
+11. The contact form stores the sender's name, e-mail, message and IP address in the database. How long should messages be kept, and who reads them? (An e-mail notification to a mailbox can be added once the mailbox and SMTP details are known.)
+12. Is audience measurement (analytics) wanted? None is installed, so no cookie banner is needed: the only cookie is a functional language preference set when a visitor picks a language.
+13. The About and Members pages were summarised from the statutes (Arabic original). The French and English wording is a working translation: ANAGEM should validate it, and the statutes PDF should be uploaded and attached to the About page.

@@ -1,0 +1,41 @@
+<app-page-header title="homepage.title" subtitle="homepage.subtitle" />
+
+@if (error(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (loading()) {
+  <div class="card"><app-skeleton-rows [rows]="6" /></div>
+} @else {
+  <div class="space-y-3">
+    @for (d of drafts(); track d.section.key) {
+      <section class="card overflow-hidden">
+        <header class="flex flex-wrap items-center gap-3 px-5 py-3.5">
+          <button type="button" class="flex min-w-0 flex-1 items-center gap-3 text-start" (click)="toggle(d)" [attr.aria-expanded]="d.open">
+            <app-icon [name]="d.open ? 'chevron-up' : 'chevron-down'" class="text-muted" />
+            <span class="min-w-0">
+              <span class="block font-bold text-primary-dark">{{ 'homepage.sections.' + d.section.key + '.name' | transloco }}</span>
+              <span class="block truncate text-xs text-muted">{{ 'homepage.sections.' + d.section.key + '.hint' | transloco }}</span>
+            </span>
+          </button>
+          @if (d.dirty) { <span class="badge badge-review">{{ 'homepage.unsaved' | transloco }}</span> }
+          <label class="flex items-center gap-2 text-sm"><input type="checkbox" class="check" [(ngModel)]="d.enabled" (ngModelChange)="touch(d)" /><span>{{ 'homepage.visible' | transloco }}</span></label>
+        </header>
+
+        @if (d.open) {
+          <div class="space-y-4 border-t border-line bg-canvas/50 p-5">
+            <app-api-error-banner [error]="d.error" />
+            @if (hasLang(d.content)) { <app-json-field [parent]="d.holder" key="content" (changed)="touch(d)" /> }
+            @else { @for (k of Object.keys(d.content); track k) { <app-json-field [parent]="d.content" [key]="k" (changed)="touch(d)" /> } }
+            <div class="flex flex-wrap items-center gap-3 border-t border-line pt-4">
+              <label class="flex items-center gap-2 text-sm"><span class="text-xs font-bold text-muted uppercase rtl:normal-case">{{ 'common.order' | transloco }}</span><input type="number" class="input w-24" [(ngModel)]="d.sortOrder" (ngModelChange)="touch(d)" /></label>
+              <span class="text-xs text-muted">{{ 'common.updated' | transloco }}: {{ d.section.updatedAt | appDate: 'datetime' }}</span>
+              <span class="ms-auto flex gap-2">
+                <button type="button" class="btn btn-secondary" [disabled]="!d.dirty || d.saving" (click)="reset(d)">{{ 'homepage.reset' | transloco }}</button>
+                <button type="button" class="btn btn-primary" [disabled]="!d.dirty || d.saving" (click)="save(d)">@if (d.saving) { <app-icon name="loader-circle" class="animate-spin" /> }{{ 'common.save' | transloco }}</button>
+              </span>
+            </div>
+          </div>
+        }
+      </section>
+    }
+  </div>
+}

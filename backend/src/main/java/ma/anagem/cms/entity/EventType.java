@@ -1,0 +1,3 @@
+package ma.anagem.cms.entity;
+
+public enum EventType { CONFERENCE, SEMINAR, WORKSHOP, STUDY_DAY, FIELD_TRIP, EXHIBITION, GENERAL_ASSEMBLY, MEETING, OTHER }

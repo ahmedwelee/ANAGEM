@@ -1,0 +1,92 @@
+<app-page-header title="media.title" subtitle="media.subtitle">
+  @if (canUpload()) {
+    <label class="btn btn-primary cursor-pointer"><app-icon name="upload" />{{ 'media.upload' | transloco }}<input type="file" class="sr-only" multiple accept="image/jpeg,image/png,image/gif,image/webp,application/pdf" (change)="onPick($event)" /></label>
+  }
+</app-page-header>
+
+<div class="card overflow-hidden" (dragover)="$event.preventDefault(); dragging.set(canUpload())" (dragleave)="dragging.set(false)" (drop)="onDrop($event)" [class.ring-2]="dragging()" [class.ring-primary]="dragging()">
+  <div class="flex flex-wrap items-center gap-3 border-b border-line p-4">
+    <div class="relative min-w-52 flex-1 sm:max-w-sm">
+      <app-icon name="search" class="pointer-events-none absolute inset-y-0 start-3 text-muted" />
+      <input type="search" class="input ps-9" [placeholder]="'media.search' | transloco" (input)="search($any($event.target).value)" />
+    </div>
+    <select class="input w-auto" [(ngModel)]="kind" (ngModelChange)="load(0)" [attr.aria-label]="'common.kind' | transloco">
+      <option value="">{{ 'media.allKinds' | transloco }}</option><option value="IMAGE">{{ 'media.images' | transloco }}</option><option value="PDF">PDF</option>
+    </select>
+    <span class="ms-auto text-sm text-muted">{{ 'media.count' | transloco: { n: total() } }}</span>
+  </div>
+  @if (uploading(); as u) {
+    <div class="flex items-center gap-3 border-b border-line bg-primary-light px-4 py-2.5 text-sm" role="status"><app-icon name="loader-circle" class="animate-spin text-primary" />{{ 'media.uploading' | transloco: { done: u.done, total: u.total } }}</div>
+  }
+
+  <div class="p-4">
+    @if (error(); as e) {
+      <app-error-state [message]="e.message" (retry)="load(0)" />
+    } @else if (loading() && !items().length) {
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">@for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) { <div class="skeleton aspect-square"></div> }</div>
+    } @else if (!items().length) {
+      <app-empty-state icon="images" title="media.empty" hint="media.emptyHint" />
+    } @else {
+      <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+        @for (m of items(); track m.id) {
+          <li>
+            <button type="button" class="group block w-full overflow-hidden rounded-lg border border-line bg-surface text-start transition hover:border-primary hover:shadow-card" (click)="open(m)">
+              <span class="grid aspect-square place-items-center bg-canvas">
+                @if (m.kind === 'IMAGE') { <img [src]="m.thumbnailUrl ?? m.url" [alt]="m.translations.fr?.altText ?? m.originalName" class="size-full object-cover transition group-hover:scale-105" loading="lazy" /> }
+                @else { <span class="flex flex-col items-center gap-1 text-primary"><app-icon name="file-text" class="text-4xl" /><span class="text-xs font-bold">PDF</span></span> }
+              </span>
+              <span class="block truncate px-2 py-1.5 text-xs font-medium" [attr.title]="m.originalName">{{ m.originalName }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+      @if (page() + 1 < totalPages()) { <div class="mt-5 text-center"><button type="button" class="btn btn-secondary" (click)="load(page() + 1)" [disabled]="loading()">{{ 'common.loadMore' | transloco }}</button></div> }
+    }
+    @if (canUpload()) { <p class="mt-4 text-center text-xs text-muted">{{ 'media.dropHint' | transloco }} · {{ 'media.limits' | transloco }}</p> }
+  </div>
+</div>
+
+<app-modal [open]="!!selected()" title="media.details" width="48rem" (closed)="selected.set(null)">
+  @if (selected(); as m) {
+    <div class="grid gap-6 md:grid-cols-[14rem_1fr]">
+      <div>
+        <div class="grid aspect-square place-items-center overflow-hidden rounded-lg border border-line bg-canvas">
+          @if (m.kind === 'IMAGE') { <img [src]="m.thumbnailUrl ?? m.url" [alt]="m.originalName" class="size-full object-contain" /> } @else { <app-icon name="file-text" class="text-6xl text-primary" /> }
+        </div>
+        <dl class="mt-4 space-y-1.5 text-xs text-muted">
+          <div class="flex justify-between gap-2"><dt>{{ 'common.type' | transloco }}</dt><dd class="font-mono text-ink">{{ m.contentType }}</dd></div>
+          <div class="flex justify-between gap-2"><dt>{{ 'media.size' | transloco }}</dt><dd class="text-ink">{{ size(m) }}</dd></div>
+          @if (m.width) { <div class="flex justify-between gap-2"><dt>{{ 'media.dimensions' | transloco }}</dt><dd class="text-ink" dir="ltr">{{ m.width }} × {{ m.height }}</dd></div> }
+          <div class="flex justify-between gap-2"><dt>{{ 'media.uploadedBy' | transloco }}</dt><dd class="text-ink">{{ m.uploadedBy || '—' }}</dd></div>
+          <div class="flex justify-between gap-2"><dt>{{ 'common.date' | transloco }}</dt><dd class="text-ink">{{ m.createdAt | appDate }}</dd></div>
+        </dl>
+        <div class="mt-4 flex gap-2">
+          <a [href]="m.url" target="_blank" rel="noopener" class="btn btn-secondary btn-sm flex-1"><app-icon name="external-link" />{{ 'media.open' | transloco }}</a>
+          <button type="button" class="btn btn-secondary btn-sm flex-1" (click)="copy(m)"><app-icon name="copy" />{{ 'common.copy' | transloco }}</button>
+        </div>
+      </div>
+      <div>
+        <p class="mb-1 truncate text-sm font-bold text-primary-dark" [attr.title]="m.originalName">{{ m.originalName }}</p>
+        <p class="mb-3 text-xs text-muted">{{ 'media.altHint' | transloco }}</p>
+        <div class="rounded-lg border border-line">
+          <app-lang-tabs [(active)]="activeLang" />
+          <form [formGroup]="form" id="media-form" (ngSubmit)="saveMeta()" class="p-4">
+            @for (l of langs; track l) {
+              <div [formGroupName]="l" [hidden]="activeLang() !== l" class="space-y-3">
+                <div><label class="label" [attr.for]="'alt-' + l">{{ 'media.altText' | transloco }}</label><input class="input" [id]="'alt-' + l" formControlName="altText" [attr.dir]="l === 'ar' ? 'rtl' : 'ltr'" maxlength="500" [readonly]="!canUpload()" /></div>
+                <div><label class="label" [attr.for]="'desc-' + l">{{ 'common.description' | transloco }}</label><textarea class="input" rows="3" [id]="'desc-' + l" formControlName="description" [attr.dir]="l === 'ar' ? 'rtl' : 'ltr'" maxlength="1000" [readonly]="!canUpload()"></textarea></div>
+              </div>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+  @if (selected(); as m) {
+    <ng-container modal-footer>
+      @if (canDelete()) { <button type="button" class="btn btn-danger-ghost me-auto" (click)="remove(m)"><app-icon name="trash-2" />{{ 'common.delete' | transloco }}</button> }
+      <button type="button" class="btn btn-secondary" (click)="selected.set(null)">{{ 'common.close' | transloco }}</button>
+      @if (canUpload()) { <button type="submit" form="media-form" class="btn btn-primary" [disabled]="saving()">@if (saving()) { <app-icon name="loader-circle" class="animate-spin" /> }{{ 'common.save' | transloco }}</button> }
+    </ng-container>
+  }
+</app-modal>

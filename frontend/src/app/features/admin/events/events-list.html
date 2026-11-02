@@ -1,0 +1,65 @@
+<app-page-header title="events.title" subtitle="events.subtitle">
+  <a routerLink="/admin/events/new" class="btn btn-primary"><app-icon name="plus" />{{ 'events.new' | transloco }}</a>
+</app-page-header>
+
+<div class="card overflow-hidden">
+  <app-list-toolbar placeholder="events.search" (search)="onSearch($event)">
+    <select class="input w-auto" [(ngModel)]="scope" (ngModelChange)="onFilter()" [attr.aria-label]="'events.when' | transloco">
+      <option value="">{{ 'events.allDates' | transloco }}</option>
+      <option value="UPCOMING">{{ 'events.upcoming' | transloco }}</option>
+      <option value="PAST">{{ 'events.past' | transloco }}</option>
+    </select>
+    <select class="input w-auto" [(ngModel)]="type" (ngModelChange)="onFilter()" [attr.aria-label]="'common.type' | transloco">
+      <option value="">{{ 'events.allTypes' | transloco }}</option>
+      @for (t of types; track t) { <option [value]="t">{{ 'eventType.' + t | transloco }}</option> }
+    </select>
+    <select class="input w-auto" [(ngModel)]="status" (ngModelChange)="onFilter()" [attr.aria-label]="'common.status' | transloco">
+      <option value="">{{ 'common.allStatuses' | transloco }}</option>
+      @for (s of statuses; track s) { <option [value]="s">{{ 'status.' + s | transloco }}</option> }
+    </select>
+  </app-list-toolbar>
+
+  @if (list.error(); as e) {
+    <app-error-state [message]="e.message" (retry)="list.load()" />
+  } @else if (list.loading() && !list.items().length) {
+    <app-skeleton-rows />
+  } @else if (!list.items().length) {
+    <app-empty-state icon="calendar-days" title="events.empty" hint="events.emptyHint"><a routerLink="/admin/events/new" class="btn btn-primary btn-sm"><app-icon name="plus" />{{ 'events.new' | transloco }}</a></app-empty-state>
+  } @else {
+    <div class="overflow-x-auto" [class.opacity-60]="list.loading()">
+      <table class="tbl">
+        <thead><tr>
+          <th>{{ 'events.colTitle' | transloco }}</th><th>{{ 'common.date' | transloco }}</th><th>{{ 'common.status' | transloco }}</th>
+          <th>{{ 'common.languages' | transloco }}</th><th class="w-24"><span class="sr-only">{{ 'common.actions' | transloco }}</span></th>
+        </tr></thead>
+        <tbody>
+          @for (e of list.items(); track e.id) {
+            <tr>
+              <td class="max-w-md">
+                <a [routerLink]="['/admin/events', e.id]" class="font-semibold text-primary-dark hover:text-primary hover:underline">{{ e.title }}</a>
+                <span class="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
+                  <span class="badge badge-info">{{ 'eventType.' + e.type | transloco }}</span>
+                  @if (e.location) { <span class="inline-flex items-center gap-1"><app-icon name="map-pin" />{{ e.location }}</span> }
+                  @if (e.featured) { <span class="inline-flex items-center gap-1 text-warn"><app-icon name="star" />{{ 'common.featured' | transloco }}</span> }
+                </span>
+              </td>
+              <td class="whitespace-nowrap">
+                <span class="block">{{ e.startsAt | appDate: (e.allDay ? 'date' : 'datetime') }}</span>
+                <span class="badge mt-1" [class]="e.timeStatus === 'UPCOMING' ? 'badge-published' : e.timeStatus === 'ONGOING' ? 'badge-scheduled' : 'badge-draft'">{{ 'timeStatus.' + e.timeStatus | transloco }}</span>
+              </td>
+              <td><app-status-badge [status]="e.status" /></td>
+              <td><app-translation-dots [items]="e.translationStatus" /></td>
+              <td>
+                <span class="flex justify-end gap-1">
+                  <a [routerLink]="['/admin/events', e.id]" class="btn btn-ghost btn-icon btn-sm" [attr.aria-label]="'common.edit' | transloco"><app-icon name="pencil" /></a>
+                  @if (auth.can('CONTENT_DELETE')) { <button type="button" class="btn btn-danger-ghost btn-icon btn-sm" (click)="remove(e)" [attr.aria-label]="'common.delete' | transloco"><app-icon name="trash-2" /></button> }
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-pagination [page]="list.page()" [size]="list.size" [total]="list.total()" [totalPages]="list.totalPages()" (pageChange)="list.load($event)" />
+  }
+</div>

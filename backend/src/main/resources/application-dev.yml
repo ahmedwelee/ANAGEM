@@ -1,0 +1,18 @@
+# Development only. Never use these defaults in production.
+spring:
+  datasource:
+    password: ${DB_PASSWORD:anagem_dev}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-jwt-secret-do-not-use-in-production-0123456789abcdef}
+  bootstrap-admin:
+    email: ${BOOTSTRAP_ADMIN_EMAIL:admin@anagem.local}
+    # Empty password => a random one is generated and printed once in the log at first start.
+    password: ${BOOTSTRAP_ADMIN_PASSWORD:}

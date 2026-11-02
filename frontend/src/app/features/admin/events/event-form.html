@@ -1,0 +1,103 @@
+<app-page-header [title]="isNew ? 'events.new' : 'events.edit'" [subtitle]="isNew ? 'events.newHint' : null">
+  <a routerLink="/admin/events" class="btn btn-ghost"><app-icon name="chevron-left" class="rtl:-scale-x-100" />{{ 'common.back' | transloco }}</a>
+  @if (!isNew && auth.can('CONTENT_DELETE')) { <button type="button" class="btn btn-danger-ghost" (click)="remove()"><app-icon name="trash-2" />{{ 'common.delete' | transloco }}</button> }
+  <button type="button" class="btn btn-primary" [disabled]="saving() || loading()" (click)="save()"><app-icon [name]="saving() ? 'loader-circle' : 'save'" [class.animate-spin]="saving()" />{{ 'common.save' | transloco }}</button>
+</app-page-header>
+
+<app-api-error-banner [error]="error()" />
+
+@if (loadError(); as e) {
+  <div class="card"><app-error-state [message]="e.message" (retry)="load()" /></div>
+} @else if (loading()) {
+  <div class="grid gap-6 xl:grid-cols-[1fr_22rem]"><div class="skeleton h-[28rem] rounded-card"></div><div class="skeleton h-80 rounded-card"></div></div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" class="grid items-start gap-6 xl:grid-cols-[1fr_22rem]" novalidate>
+    <div class="card">
+      <app-lang-tabs [(active)]="activeLang" [filled]="filled()" [status]="entity()?.translationStatus ?? null" />
+      <div formGroupName="translations" class="p-5">
+        @for (l of langs; track l) {
+          <div [formGroupName]="l" [hidden]="activeLang() !== l" role="tabpanel" class="space-y-5">
+            <div>
+              <label class="label" [attr.for]="'title-' + l">{{ 'events.fieldTitle' | transloco }}</label>
+              <input class="input text-lg font-semibold" [id]="'title-' + l" formControlName="title" [attr.dir]="dirOf(l)" [attr.lang]="l" maxlength="300" />
+              <app-field-error [control]="tr(l)" />
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label class="label" [attr.for]="'loc-' + l">{{ 'events.location' | transloco }}</label>
+                <input class="input" [id]="'loc-' + l" formControlName="location" [attr.dir]="dirOf(l)" maxlength="300" />
+              </div>
+              <div>
+                <label class="label" [attr.for]="'org-' + l">{{ 'events.organizer' | transloco }}</label>
+                <input class="input" [id]="'org-' + l" formControlName="organizer" [attr.dir]="dirOf(l)" maxlength="300" />
+              </div>
+            </div>
+            <div>
+              <span class="label">{{ 'events.fieldDescription' | transloco }}</span>
+              <app-rich-text-editor formControlName="description" [dir]="dirOf(l)" [lang]="l" [placeholder]="'events.descriptionPlaceholder' | transloco" />
+            </div>
+          </div>
+        }
+        <app-field-error [control]="form.controls.translations" />
+      </div>
+    </div>
+
+    <aside class="space-y-6">
+      @if (entity(); as e) {
+        <app-status-actions [status]="e.status" [publishedAt]="e.publishedAt" [busy]="statusBusy() || saving()" (change)="changeStatus($event)" />
+        <div class="card card-pad flex items-center justify-between text-sm">
+          <span class="font-semibold">{{ 'events.timeStatus' | transloco }}</span>
+          <span class="badge" [class]="e.timeStatus === 'UPCOMING' ? 'badge-published' : e.timeStatus === 'ONGOING' ? 'badge-scheduled' : 'badge-draft'">{{ 'timeStatus.' + e.timeStatus | transloco }}</span>
+        </div>
+      } @else {
+        <div class="card card-pad flex gap-3 text-sm text-muted"><app-icon name="info" class="mt-0.5 text-lg text-primary" /><p>{{ 'workflow.saveFirst' | transloco }}</p></div>
+      }
+
+      <div class="card card-pad space-y-4">
+        <h2 class="section-title">{{ 'events.dates' | transloco }}</h2>
+        <label class="flex items-center gap-3 text-sm"><input type="checkbox" class="check" formControlName="allDay" (change)="onAllDayChange()" /><span class="font-semibold">{{ 'events.allDay' | transloco }}</span></label>
+        <div>
+          <label class="label" for="starts">{{ 'events.starts' | transloco }}</label>
+          @if (form.controls.allDay.value) { <input id="starts" class="input" type="date" formControlName="startsAt" /> } @else { <input id="starts" class="input" type="datetime-local" formControlName="startsAt" /> }
+          <app-field-error [control]="form.controls.startsAt" />
+        </div>
+        <div>
+          <label class="label" for="ends">{{ 'events.ends' | transloco }} <span class="font-normal text-muted normal-case">({{ 'common.optional' | transloco }})</span></label>
+          @if (form.controls.allDay.value) { <input id="ends" class="input" type="date" formControlName="endsAt" /> } @else { <input id="ends" class="input" type="datetime-local" formControlName="endsAt" /> }
+          <app-field-error [control]="form" />
+        </div>
+        <p class="hint">{{ 'events.timezoneHint' | transloco }}</p>
+      </div>
+
+      <div class="card card-pad space-y-4">
+        <h2 class="section-title">{{ 'events.settings' | transloco }}</h2>
+        <div>
+          <label class="label" for="type">{{ 'common.type' | transloco }}</label>
+          <select id="type" class="input" formControlName="type">@for (t of types; track t) { <option [value]="t">{{ 'eventType.' + t | transloco }}</option> }</select>
+        </div>
+        <div>
+          <label class="label" for="category">{{ 'common.category' | transloco }}</label>
+          <select id="category" class="input" formControlName="categoryId">
+            <option [ngValue]="null">{{ 'common.noCategory' | transloco }}</option>
+            @for (c of categories(); track c.id) { <option [ngValue]="c.id">{{ catName(c) }}</option> }
+          </select>
+        </div>
+        <div>
+          <label class="label" for="reg">{{ 'events.registrationUrl' | transloco }}</label>
+          <input id="reg" class="input" dir="ltr" formControlName="registrationUrl" placeholder="https://" />
+          <app-field-error [control]="form.controls.registrationUrl" />
+        </div>
+        <div><span class="label">{{ 'events.image' | transloco }}</span><app-media-field formControlName="image" kind="IMAGE" /></div>
+        <div><span class="label">{{ 'events.program' | transloco }}</span><app-media-field formControlName="programFile" kind="PDF" /></div>
+        <label class="flex items-start gap-3 text-sm"><input type="checkbox" class="check mt-0.5" formControlName="featured" /><span><span class="font-semibold">{{ 'common.featured' | transloco }}</span><span class="block text-xs text-muted">{{ 'events.featuredHint' | transloco }}</span></span></label>
+        @if (!isNew) {
+          <div>
+            <label class="label" for="slug">{{ 'common.slug' | transloco }}</label>
+            <input id="slug" class="input font-mono text-xs" dir="ltr" formControlName="slug" />
+            <app-field-error [control]="form.controls.slug" />
+          </div>
+        }
+      </div>
+    </aside>
+  </form>
+}

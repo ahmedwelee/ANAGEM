@@ -1,0 +1,125 @@
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:shadow-pop">{{ 'public.skip' | transloco }}</a>
+
+<div class="flex min-h-dvh flex-col bg-canvas">
+  <header>
+    <!-- Top bar -->
+    <div class="bg-primary-deep text-xs text-white/90">
+      <div class="mx-auto flex min-h-9 w-[min(100%-2rem,1240px)] items-center justify-between gap-4">
+        <ul class="hidden items-center gap-5 md:flex">
+          @if (site.text('contact.email'); as e) { <li><a [href]="'mailto:' + e" class="flex items-center gap-1.5 hover:text-white"><app-icon name="mail" />{{ e }}</a></li> }
+          @if (site.text('contact.phone'); as p) { <li><a [href]="'tel:' + p.replace(' ', '')" class="flex items-center gap-1.5 hover:text-white"><app-icon name="phone" /><span dir="ltr">{{ p }}</span></a></li> }
+          @if (site.text('contact.address'); as a) { <li class="flex items-center gap-1.5"><app-icon name="map-pin" />{{ a }}</li> }
+        </ul>
+        <div class="ms-auto flex items-center gap-4">
+          <nav class="flex items-center" [attr.aria-label]="'public.languages' | transloco">
+            @for (l of langs; track l) {
+              <a [routerLink]="switchLinks()[l].path" [queryParams]="switchLinks()[l].query" [attr.lang]="l" [attr.hreflang]="l" [attr.aria-current]="lang.lang() === l ? 'true' : null"
+                class="relative px-2.5 py-1 text-[13px] font-semibold transition hover:opacity-100" [class]="lang.lang() === l ? 'opacity-100 after:absolute after:inset-x-2.5 after:bottom-0 after:h-0.5 after:rounded after:bg-white' : 'opacity-70'">{{ 'lang.' + l | transloco }}</a>
+            }
+          </nav>
+          <form class="flex h-7 items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3 transition focus-within:border-white/70 focus-within:bg-white/20" role="search" (submit)="search($event, q)">
+            <app-icon name="search" />
+            <input #q type="search" name="q" class="w-24 bg-transparent text-white outline-none placeholder:text-white/70 focus:w-40 sm:w-32" [placeholder]="'public.search' | transloco" [attr.aria-label]="'public.search' | transloco" />
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand band -->
+    <div class="relative overflow-hidden text-white" style="background: radial-gradient(120% 220% at 15% 0%, var(--c-primary) 0%, var(--c-primary-dark) 100%)">
+      <div class="pointer-events-none absolute inset-0 opacity-[.07]" style="background-image: repeating-linear-gradient(0deg, transparent 0 23px, #fff 23px 24px), repeating-linear-gradient(90deg, transparent 0 47px, #fff 47px 48px)"></div>
+      <div class="relative mx-auto w-[min(100%-2rem,1240px)]">
+        <a [routerLink]="['/', lang.lang()]" class="group flex w-fit items-center gap-4 py-3.5" [attr.aria-label]="'public.home' | transloco">
+          <img src="anagem-logo-white.png" width="84" height="84" alt="" class="size-16 transition duration-500 group-hover:-rotate-6 group-hover:scale-105 sm:size-[84px]" />
+          <span class="h-14 w-px bg-white/40"></span>
+          <span class="flex flex-col gap-0.5">
+            <span class="text-base leading-snug font-semibold sm:text-xl" lang="fr" dir="ltr">Association Nationale des Géographes Marocains</span>
+            <span class="text-lg leading-snug font-bold sm:text-2xl" lang="ar" dir="rtl" style="font-family: var(--f-ar)">الجمعية الوطنية للجغرافيين المغاربة</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main navigation (sticky) -->
+  <nav class="sticky top-0 z-40 border-b border-line bg-surface/95 shadow-card backdrop-blur" [attr.aria-label]="'public.mainNav' | transloco">
+    <div class="mx-auto flex w-[min(100%-2rem,1240px)] items-center">
+      <button type="button" class="btn btn-ghost btn-icon my-1 ms-auto lg:hidden" (click)="menuOpen.set(!menuOpen())" [attr.aria-expanded]="menuOpen()" aria-controls="pub-menu" [attr.aria-label]="'public.menu' | transloco"><app-icon [name]="menuOpen() ? 'x' : 'menu'" class="text-xl" /></button>
+      <ul id="pub-menu" class="max-lg:absolute max-lg:inset-x-0 max-lg:top-full max-lg:max-h-[75vh] max-lg:overflow-y-auto max-lg:border-b max-lg:border-line max-lg:bg-surface max-lg:px-4 max-lg:pb-4 max-lg:shadow-pop lg:mx-auto lg:flex lg:items-stretch"
+        [class.hidden]="!menuOpen()" [class.max-lg:block]="menuOpen()">
+        @for (m of menu; track m.label) {
+          <li class="group relative flex flex-col lg:flex-row" [class.max-lg:border-b]="true" [class.max-lg:border-line]="true">
+            @if (m.items) {
+              <button type="button" class="flex min-h-12 items-center justify-between gap-1.5 px-4 py-3.5 text-sm font-semibold text-ink transition hover:text-primary group-focus-within:text-primary max-lg:px-1" (click)="toggleSub(m.label)" [attr.aria-expanded]="openSub() === m.label" aria-haspopup="true">
+                {{ m.label | transloco }}<app-icon name="chevron-down" class="text-xs opacity-70 transition group-hover:rotate-180" />
+              </button>
+              <ul class="z-50 min-w-60 rounded-xl border border-line bg-surface p-2 shadow-pop lg:invisible lg:absolute lg:start-0 lg:top-full lg:translate-y-2 lg:opacity-0 lg:transition lg:group-focus-within:visible lg:group-focus-within:translate-y-0 lg:group-focus-within:opacity-100 lg:group-hover:visible lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
+                [class.hidden]="openSub() !== m.label" [class.lg:block]="true">
+                @for (i of m.items; track i.label) {
+                  <li><a [routerLink]="['/', lang.lang(), i.path]" [queryParams]="i.query" class="block rounded-lg px-3 py-2.5 text-sm font-medium transition hover:bg-primary-soft hover:text-primary">{{ i.label | transloco }}</a></li>
+                }
+              </ul>
+            } @else {
+              <a [routerLink]="['/', lang.lang(), m.path]" routerLinkActive="text-primary after:scale-x-100" [routerLinkActiveOptions]="{ exact: !!m.exact }"
+                class="relative flex min-h-12 items-center px-4 py-3.5 text-sm font-semibold text-ink transition after:absolute after:inset-x-4 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:rounded-t after:bg-primary after:transition hover:text-primary hover:after:scale-x-100 max-lg:px-1 max-lg:after:hidden rtl:after:origin-right">{{ m.label | transloco }}</a>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </nav>
+
+  @if (maintenance()) {
+    <main id="main" class="grid flex-1 place-items-center px-6 py-24 text-center">
+      <div class="max-w-lg"><span class="mx-auto mb-5 grid size-16 place-items-center rounded-full bg-warn-soft text-3xl text-warn"><app-icon name="triangle-alert" /></span>
+        <h1 class="text-2xl font-extrabold text-primary-dark">{{ 'public.maintenanceTitle' | transloco }}</h1>
+        <p class="mt-3 text-muted">{{ site.text('maintenance.message') }}</p></div>
+    </main>
+  } @else {
+    <main id="main" class="flex-1"><router-outlet /></main>
+  }
+
+  <!-- Footer -->
+  <footer class="relative mt-16 overflow-hidden text-white/85" style="background: linear-gradient(180deg, var(--c-primary-dark), var(--c-primary-deep))">
+    <svg class="pointer-events-none absolute end-0 bottom-0 h-full w-[min(640px,70%)] opacity-10 rtl:-scale-x-100" viewBox="0 0 600 300" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="1">
+      @for (i of [0,1,2,3,4]; track i) { <path [attr.d]="'M0 ' + (275 - i * 25) + 'c80-60 150 10 240-30s130-110 360-70'" /> }</g></svg>
+    <div class="relative mx-auto grid w-[min(100%-2rem,1240px)] gap-8 py-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr]">
+      <div class="flex items-start gap-4">
+        <img src="anagem-logo-white.png" width="72" height="72" alt="ANAGEM" class="size-[72px] shrink-0" loading="lazy" />
+        <div class="flex flex-col gap-0.5 text-sm"><strong class="text-xl font-extrabold tracking-wide text-white">ANAGEM</strong><span lang="fr" dir="ltr">Association Nationale des Géographes Marocains</span><span lang="ar" dir="rtl" class="font-semibold" style="font-family: var(--f-ar)">الجمعية الوطنية للجغرافيين المغاربة</span>
+          @if (site.text('site.tagline'); as t) { <em class="mt-2 text-white/70 not-italic">{{ t }}</em> }</div>
+      </div>
+      <nav [attr.aria-label]="'public.footerNav' | transloco">
+        <h2 class="mb-3 text-xs font-bold tracking-wider text-white uppercase rtl:tracking-normal rtl:text-sm rtl:normal-case">{{ 'public.footerNav' | transloco }}</h2>
+        <ul class="space-y-1.5 text-sm">
+          @for (m of menu; track m.label) { <li><a [routerLink]="['/', lang.lang(), m.path]" class="transition hover:text-white hover:underline">{{ m.label | transloco }}</a></li> }
+        </ul>
+      </nav>
+      <div>
+        <h2 class="mb-3 text-xs font-bold tracking-wider text-white uppercase rtl:tracking-normal rtl:text-sm rtl:normal-case">{{ 'public.social' | transloco }}</h2>
+        @if (socials().length) {
+          <ul class="flex gap-2">@for (s of socials(); track s.k) { <li><a [href]="s.url" target="_blank" rel="noopener noreferrer" class="grid size-10 place-items-center rounded-full bg-white/12 transition hover:-translate-y-1 hover:bg-white hover:text-primary" [attr.aria-label]="s.k"><app-icon [name]="iconFor(s.k)" /></a></li> }</ul>
+        } @else { <p class="text-sm text-white/60">—</p> }
+      </div>
+      <div>
+        <h2 class="mb-3 text-xs font-bold tracking-wider text-white uppercase rtl:tracking-normal rtl:text-sm rtl:normal-case">{{ 'public.contactUs' | transloco }}</h2>
+        <ul class="space-y-2 text-sm">
+          @if (site.text('contact.address'); as a) { <li class="flex items-center gap-2"><app-icon name="map-pin" class="opacity-75" />{{ a }}</li> }
+          @if (site.text('contact.email'); as e) { <li class="flex items-center gap-2"><app-icon name="mail" class="opacity-75" /><a [href]="'mailto:' + e" class="hover:text-white">{{ e }}</a></li> }
+          @if (site.text('contact.phone'); as p) { <li class="flex items-center gap-2"><app-icon name="phone" class="opacity-75" /><a [href]="'tel:' + p.replace(' ', '')" dir="ltr" class="hover:text-white">{{ p }}</a></li> }
+          <li><a [routerLink]="['/', lang.lang(), 'contact']" class="inline-flex items-center gap-1.5 font-semibold text-white hover:underline">{{ 'public.writeUs' | transloco }}<app-icon name="arrow-right" class="rtl:-scale-x-100" /></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="relative border-t border-white/15 bg-black/10">
+      <div class="mx-auto flex w-[min(100%-2rem,1240px)] flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-xs">
+        <small>© {{ year }} ANAGEM. {{ 'public.rights' | transloco }}</small>
+        <ul class="flex flex-wrap gap-5">
+          <li><a [routerLink]="['/', lang.lang(), 'legal']" class="hover:text-white hover:underline">{{ 'public.legal' | transloco }}</a></li>
+          <li><a [routerLink]="['/', lang.lang(), 'privacy']" class="hover:text-white hover:underline">{{ 'public.privacy' | transloco }}</a></li>
+          <li><a href="/sitemap.xml" class="hover:text-white hover:underline">{{ 'public.sitemap' | transloco }}</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>

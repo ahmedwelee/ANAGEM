@@ -1,0 +1,167 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+/* Tailwind colours resolve to the shared design tokens (src/styles/tokens.css). */
+@theme inline {
+  --color-primary: var(--c-primary);
+  --color-primary-dark: var(--c-primary-dark);
+  --color-primary-deep: var(--c-primary-deep);
+  --color-primary-light: var(--c-primary-light);
+  --color-primary-soft: var(--c-primary-soft);
+  --color-surface: var(--c-white);
+  --color-canvas: var(--c-bg);
+  --color-ink: var(--c-text);
+  --color-muted: var(--c-text-2);
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+  --color-accent: var(--c-accent);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+  --font-sans: var(--f-latin);
+  --shadow-card: var(--sh-1);
+  --shadow-pop: var(--sh-3);
+  --radius-card: var(--r-lg);
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  html[lang="ar"] { font-family: var(--f-ar); }
+  body { @apply bg-canvas text-ink antialiased; font-family: var(--f-latin); }
+  html[lang="ar"] body { font-family: var(--f-ar); }
+  button, [role="button"] { cursor: pointer; }
+  :focus-visible { outline: 3px solid color-mix(in oklab, var(--c-primary) 55%, white); outline-offset: 2px; border-radius: 6px; }
+  app-status-actions, app-media-field, app-rich-text-editor, app-lang-tabs, app-page-header, app-list-toolbar, app-pagination, app-empty-state,
+  app-error-state, app-api-error-banner, app-json-field, app-skeleton-rows, app-news-form, app-event-form { display: block; }
+  ::selection { background: color-mix(in oklab, var(--c-primary) 22%, white); }
+}
+
+@layer components {
+  /* Buttons */
+  .btn { @apply inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent px-4 text-sm font-semibold transition select-none disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply bg-primary text-white shadow-sm hover:bg-primary-dark active:translate-y-px; }
+  .btn-accent { @apply bg-accent text-white shadow-sm hover:brightness-90 active:translate-y-px; }
+  .btn-secondary { @apply border-line-strong bg-surface text-primary-dark hover:border-primary hover:bg-primary-light; }
+  .btn-ghost { @apply text-primary-dark hover:bg-primary-soft; }
+  .btn-danger { @apply bg-danger text-white hover:brightness-90; }
+  .btn-danger-ghost { @apply text-danger hover:bg-danger-soft; }
+  .btn-sm { @apply h-8 px-3 text-xs; }
+  .btn-icon { @apply h-9 w-9 shrink-0 p-0; }
+
+  /* Forms */
+  .input { @apply block w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm text-ink placeholder:text-muted/70 transition focus:border-primary focus:outline-none focus:ring-3 focus:ring-primary/20 disabled:bg-canvas disabled:text-muted; }
+  select.input { @apply pe-8; }
+  textarea.input { @apply min-h-24 leading-relaxed; }
+  .input.ng-invalid.ng-touched { @apply border-danger focus:ring-danger/20; }
+  .label { @apply mb-1.5 block text-xs font-semibold tracking-wide text-primary-dark uppercase; }
+  html[lang="ar"] .label { @apply tracking-normal normal-case text-sm; }
+  .hint { @apply mt-1 text-xs text-muted; }
+  .field-error { @apply mt-1 text-xs font-medium text-danger; }
+  .check { @apply size-4 rounded border-line-strong accent-primary; }
+
+  /* Surfaces */
+  .card { @apply rounded-card border border-line bg-surface shadow-card; }
+  .card-pad { @apply p-5; }
+  .page-title { @apply text-2xl font-extrabold tracking-tight text-primary-dark; }
+  html[lang="ar"] .page-title { @apply tracking-normal; }
+  .section-title { @apply text-sm font-bold text-primary-dark; }
+
+  /* Badges */
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap; }
+  .badge-draft { @apply bg-canvas text-muted ring-1 ring-line-strong ring-inset; }
+  .badge-review { @apply bg-warn-soft text-warn; }
+  .badge-scheduled { @apply bg-primary-soft text-primary; }
+  .badge-published { @apply bg-accent-soft text-accent; }
+  .badge-archived { @apply bg-line text-primary-dark; }
+  .badge-danger { @apply bg-danger-soft text-danger; }
+  .badge-info { @apply bg-primary-soft text-primary-dark; }
+
+  /* Tables */
+  .tbl { @apply w-full border-collapse text-sm; }
+  .tbl th { @apply border-b border-line bg-canvas px-4 py-2.5 text-start text-xs font-bold tracking-wide text-muted uppercase; }
+  html[lang="ar"] .tbl th { @apply tracking-normal normal-case text-sm; }
+  .tbl td { @apply border-b border-line px-4 py-3 align-middle; }
+  .tbl tbody tr { @apply transition-colors hover:bg-primary-light/60; }
+  .tbl tbody tr:last-child td { @apply border-b-0; }
+
+  /* Tabs */
+  .tabs { @apply flex gap-1 border-b border-line; }
+  .tab { @apply relative -mb-px inline-flex items-center gap-2 rounded-t-lg border border-transparent px-4 py-2.5 text-sm font-semibold text-muted transition hover:text-primary; }
+  .tab[aria-selected="true"] { @apply border-line border-b-surface bg-surface text-primary-dark; }
+
+  /* Loading */
+  .skeleton { @apply rounded-md bg-line; position: relative; overflow: hidden; }
+  .skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, color-mix(in oklab, white 70%, transparent), transparent); animation: shimmer 1.4s infinite; }
+  [dir="rtl"] .skeleton::after { transform: translateX(100%); animation-name: shimmer-rtl; }
+  @keyframes shimmer { to { transform: translateX(100%); } }
+  @keyframes shimmer-rtl { to { transform: translateX(-100%); } }
+
+  /* Rich text (editor and previews) */
+  .rte-content { @apply text-[15px] leading-7 text-ink; }
+  .rte-content > * + * { @apply mt-3; }
+  .rte-content h2 { @apply mt-6 text-xl font-bold text-primary-dark; }
+  .rte-content h3 { @apply mt-5 text-lg font-bold text-primary-dark; }
+  .rte-content ul { @apply list-disc ps-6; }
+  .rte-content ol { @apply list-decimal ps-6; }
+  .rte-content a { @apply text-primary underline; }
+  .rte-content blockquote { @apply border-s-4 border-primary-soft bg-canvas px-4 py-2 text-muted italic; }
+  .rte-content img { @apply my-2 h-auto max-w-full rounded-lg; }
+  .rte-content table { @apply w-full border-collapse; }
+  .rte-content th, .rte-content td { @apply min-w-16 border border-line-strong px-3 py-2 align-top; }
+  .rte-content th { @apply bg-primary-light text-start font-bold; }
+  .rte-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: inline-start; height: 0; pointer-events: none; @apply text-muted/60; }
+  .rte-content .ProseMirror { @apply min-h-64 px-4 py-3 outline-none; }
+  .rte-content .ProseMirror-selectednode { outline: 2px solid var(--c-primary); }
+  .rte-content .selectedCell { background: color-mix(in oklab, var(--c-primary) 14%, white); }
+}
+
+.icon { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- Public site: motion ported from the Phase 2 prototype ---------- */
+@keyframes word-in { from { opacity: 0; transform: translateY(.55em); } to { opacity: 1; transform: none; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes kenburns { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.12) translate3d(-1.5%, -1%, 0); } }
+@keyframes map-draw { to { stroke-dashoffset: 0; } }
+@keyframes map-fill { to { fill-opacity: var(--fo, 1); } }
+@keyframes map-ring { from { transform: scale(.4); opacity: .9; } to { transform: scale(2.6); opacity: 0; } }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes drop-in { from { opacity: 0; transform: translateY(-8px); } }
+
+@layer utilities {
+  .anim-word { display: inline-block; opacity: 0; animation: word-in .9s var(--ease-out) forwards; animation-delay: calc(var(--i, 0) * 65ms + 150ms); }
+  .anim-fade-up { opacity: 0; animation: fade-up .9s var(--ease-out) forwards; animation-delay: var(--delay, 0s); }
+  .anim-kenburns { animation: kenburns 26s ease-in-out infinite alternate; }
+  .anim-float { animation: floaty 6s ease-in-out infinite; }
+  .anim-drop { animation: drop-in .35s var(--ease-out); }
+}
+
+@layer components {
+  .reveal-js { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); transition-delay: calc(var(--d, 0) * 90ms); }
+  .reveal-js.is-in { opacity: 1; transform: none; }
+  .map-land { fill: url(#mapFill); fill-opacity: 0; stroke: var(--c-primary-dark); stroke-width: 2.2; stroke-linejoin: round; stroke-dasharray: 1904; stroke-dashoffset: 1904; }
+  .map-drawn .map-land { animation: map-draw 2.6s cubic-bezier(.65, 0, .35, 1) forwards, map-fill 1.2s ease forwards 1.9s; }
+  .map-mini .map-land { fill: #fff; stroke: #fff; --fo: .22; }
+  .map-hatch { opacity: 0; transition: opacity 1.2s ease 2.4s; pointer-events: none; }
+  .map-drawn .map-hatch { opacity: 1; }
+  .map-city { opacity: 0; transition: opacity .6s ease; transition-delay: calc(2.2s + var(--i, 0) * 110ms); }
+  .map-drawn .map-city, .map-mini .map-city { opacity: 1; }
+  .map-city text { font: 600 17px var(--f-latin); fill: var(--c-primary-dark); paint-order: stroke; stroke: #fff; stroke-width: 4.5px; stroke-linejoin: round; }
+  html[lang="ar"] .map-city text { font-family: var(--f-ar); }
+  .map-city .dot { fill: #fff; stroke: var(--c-primary-dark); stroke-width: 2; }
+  .map-city.hl .dot, .map-mini .map-city .dot { fill: var(--c-accent); stroke: #fff; }
+  .map-ring { fill: none; stroke: var(--c-accent); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: map-ring 2.4s ease-out infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-word, .anim-fade-up { animation: none; opacity: 1; }
+  .reveal-js { opacity: 1; transform: none; transition: none; }
+  .map-land { stroke-dashoffset: 0; fill-opacity: var(--fo, 1); animation: none !important; }
+  .map-city, .map-hatch { opacity: 1; transition: none; }
+  .anim-kenburns, .anim-float, .map-ring { animation: none; }
+}

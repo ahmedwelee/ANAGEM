@@ -1,0 +1,62 @@
+/* ANAGEM design tokens — single source of truth. Change here, everything follows. */
+:root {
+  /* Brand palette (from the brief) */
+  --c-primary: #0757A6;
+  --c-primary-dark: #06427E;
+  --c-primary-light: #EAF4FC;
+  --c-white: #FFFFFF;
+  --c-bg: #F5F9FD;
+  --c-text: #18334D;
+  --c-text-2: #64748B;
+
+  /* Derived (never new hues) */
+  --c-primary-deep: color-mix(in oklab, var(--c-primary-dark) 78%, #000);
+  --c-primary-soft: color-mix(in oklab, var(--c-primary) 10%, white);
+  --c-line: color-mix(in oklab, var(--c-primary) 14%, white);
+  --c-line-strong: color-mix(in oklab, var(--c-primary) 28%, white);
+  --c-accent: #2F9E55;            /* CTA green seen in the reference */
+  --c-accent-dark: color-mix(in oklab, var(--c-accent) 82%, #000);
+
+  /* Typography */
+  --f-latin: "Plus Jakarta Sans", system-ui, sans-serif;
+  --f-ar: "Cairo", "Noto Sans Arabic", system-ui, sans-serif;
+  --f-body: var(--f-latin);
+
+  --fs-xs: .75rem;
+  --fs-sm: .875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-h3: clamp(1.05rem, 1rem + .3vw, 1.25rem);
+  --fs-h2: clamp(1.35rem, 1.1rem + 1vw, 1.85rem);
+  --fs-h1: clamp(2rem, 1.2rem + 3.2vw, 3.6rem);
+
+  /* Spacing (8pt) */
+  --s-1: .25rem; --s-2: .5rem; --s-3: .75rem; --s-4: 1rem;
+  --s-5: 1.5rem; --s-6: 2rem; --s-7: 3rem; --s-8: 4.5rem; --s-9: 6rem;
+
+  /* Shape */
+  --r-sm: 8px; --r-md: 14px; --r-lg: 20px; --r-pill: 999px;
+
+  /* Elevation (blue-tinted, never grey) */
+  --sh-1: 0 1px 2px rgb(6 66 126 / .06), 0 1px 1px rgb(6 66 126 / .04);
+  --sh-2: 0 6px 18px -6px rgb(6 66 126 / .16), 0 2px 4px rgb(6 66 126 / .05);
+  --sh-3: 0 22px 44px -18px rgb(6 66 126 / .32), 0 6px 14px -6px rgb(6 66 126 / .12);
+
+  /* Motion */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+  --t-fast: .18s;
+  --t-med: .45s;
+  --t-slow: .9s;
+
+  --container: 1240px;
+  --gutter: clamp(1rem, 3vw, 2rem);
+  --header-h: 76px;
+  --topbar-h: 38px;
+}
+
+html[lang="ar"] { --f-body: var(--f-ar); }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 0s; --t-med: 0s; --t-slow: 0s; }
+}
