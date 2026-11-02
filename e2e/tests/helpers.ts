@@ -1,5 +1,6 @@
 import { APIRequestContext, Page, expect } from '@playwright/test';
 import path from 'node:path';
+import { isLocal } from './fixtures';
 
 export const ADMIN = { email: 'e2e-admin@anagem.test', password: 'E2e-Passw0rd-123!' };
 export const COVER = path.join(__dirname, '..', 'fixtures', 'cover.png');
@@ -68,8 +69,8 @@ export async function signInAsAdmin(page: Page) {
 export function watchForProblems(page: Page) {
   const problems: string[] = [];
   page.on('pageerror', (e) => problems.push(`pageerror: ${e.message}`));
-  page.on('console', (m) => { if (m.type() === 'error') problems.push(`console: ${m.text()}`); });
+  page.on('console', (m) => { if (m.type() === 'error' && isLocal(m.location().url || 'http://localhost/')) problems.push(`console: ${m.text()}`); }); // the refused outside requests (fonts) log an error too: not a problem of the site
   page.on('response', (r) => { if (r.status() >= 500) problems.push(`${r.status()} ${r.url()}`); });
-  page.on('requestfailed', (r) => { if (!r.url().includes('favicon')) problems.push(`failed: ${r.url()} ${r.failure()?.errorText}`); });
+  page.on('requestfailed', (r) => { if (isLocal(r.url()) && !r.url().includes('favicon')) problems.push(`failed: ${r.url()} ${r.failure()?.errorText}`); });
   return problems;
 }

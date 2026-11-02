@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { watchForProblems } from './helpers';
 
 /** A visitor on a phone (Pixel 7, 412 px wide). */

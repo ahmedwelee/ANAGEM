@@ -39,8 +39,9 @@ Coverage is measured and has a floor, so it cannot quietly fall: backend ≥ 90 
 ## How the tests are written
 
 - **Backend**: integration tests extend `IntegrationTestBase` (one embedded PostgreSQL per run, `tokenFor("EDITOR")` creates a user and signs in). Content created by a test gets a unique title, so tests do not depend on each other's data. The `dev` profile test (`DevProfileIntegrationTest`) has its own database because it loads the placeholder content.
-- **Frontend**: `src/testing/test-providers.ts` (`provideAppTesting()` uses empty dictionaries, so assertions read translation keys, not wording that editors may change), `src/testing/fixtures.ts` (data builders, `respond()`/`fail()` to answer requests, `signIn(permissions)`, `routeWith()`), `src/testing/setup.ts` (jsdom gaps such as `<dialog>`, loaded for every spec and clearing storage between tests).
+- **Frontend**: `src/testing/test-providers.ts` (`provideAppTesting()` uses empty dictionaries, so assertions read translation keys, not wording that editors may change), `src/testing/fixtures.ts` (data builders, `respond()`/`fail()` to answer requests, `signIn(permissions)`, `routeWith()`), `src/testing/setup.ts` (jsdom gaps such as `<dialog>`, loaded for every spec and clearing storage between tests; it imports `afterEach` from `vitest` so it type-checks under any tsconfig, and `src/testing` is excluded from the production build).
 - **End-to-end**: `e2e/playwright.config.ts` starts the three servers and stops them cleanly; `e2e/tests/helpers.ts` prepares data through the REST API (fast) and the tests check what a person sees. The backend for these tests is `E2eServer` in the backend *test* sources (production configuration, embedded database, administrator `e2e-admin@anagem.test`). It is never part of the shipped application.
+- The browser in the end-to-end tests can only reach this machine (`e2e/tests/fixtures.ts`): the site asks Google for web fonts, and a test must neither wait for nor fail without an internet connection.
 - Test data: the databases are thrown away after every run. Nothing here touches a real installation.
 
 ## Bugs these tests found (all fixed)

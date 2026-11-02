@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { adminApi, apiToken, uid, watchForProblems } from './helpers';
 
 /** The national meeting in Kénitra: the one real event the database starts with (migration V3). */

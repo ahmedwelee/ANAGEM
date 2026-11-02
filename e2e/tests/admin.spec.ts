@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { ADMIN, COVER, adminApi, apiToken, preferEnglish, signIn, signInAsAdmin, uid, useAdminLanguage } from './helpers';
 
 const toast = (page: import('@playwright/test').Page, text: string) => page.locator('[role="status"]', { hasText: text });
@@ -256,16 +256,14 @@ test.describe('admin: roles', () => {
 });
 
 test.describe('admin: messages and settings', () => {
-  test('a message sent from the contact page reaches the inbox and is marked as read when opened', async ({ page, browser }) => {
+  test('a message sent from the contact page reaches the inbox and is marked as read when opened', async ({ page }) => {
     const text = `Question from a visitor ${uid()}`;
-    const visitor = await browser.newPage();
-    await visitor.goto('/en/contact');
-    await visitor.locator('#c-name').fill('Karim Bennani');
-    await visitor.locator('#c-email').fill('karim@example.org');
-    await visitor.locator('#c-message').fill(text);
-    await visitor.getByRole('button', { name: 'Send', exact: true }).click();
-    await expect(visitor.getByText('Message sent')).toBeVisible();
-    await visitor.close();
+    await page.goto('/en/contact');
+    await page.locator('#c-name').fill('Karim Bennani');
+    await page.locator('#c-email').fill('karim@example.org');
+    await page.locator('#c-message').fill(text);
+    await page.getByRole('button', { name: 'Send', exact: true }).click();
+    await expect(page.getByText('Message sent')).toBeVisible();
 
     await signInAsAdmin(page);
     await page.goto('/admin/messages');

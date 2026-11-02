@@ -1,3 +1,5 @@
+import { afterEach } from 'vitest'; // imported, not a global: this file must type-check under any tsconfig (editor, dev server, build)
+
 /**
  * Browser features the app uses that jsdom does not implement. Loaded once for every spec (angular.json: test.options.setupFiles),
  * so individual specs do not need their own stubs.
