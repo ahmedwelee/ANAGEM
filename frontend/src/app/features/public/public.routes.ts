@@ -8,6 +8,9 @@ import { SiteStore } from '../../core/seo/site.store';
 export const langMatcher: UrlMatcher = (segments: UrlSegment[]) =>
   segments.length && (LANGS as readonly string[]).includes(segments[0].path) ? { consumed: [segments[0]], posParams: { lang: segments[0] } } : null;
 
+/** The home page: nothing after the language, or only empty segments ("/ar/", or a link built with an empty path), which must not end up on the not-found page. */
+export const homeMatcher: UrlMatcher = (segments: UrlSegment[]) => (segments.every((s) => s.path === '') ? { consumed: segments } : null);
+
 /** Loads the language dictionary and the site settings before any public page renders (also on the server). */
 export const publicLangGuard: CanActivateFn = async (route) => {
   const lang = route.params['lang'] as Lang;
@@ -27,7 +30,7 @@ export const PUBLIC_ROUTES: Routes = [
     runGuardsAndResolvers: 'paramsChange',
     loadComponent: () => import('./layout/public-shell').then((m) => m.PublicShellComponent),
     children: [
-      { path: '', pathMatch: 'full', ...page(() => import('./home/home').then((m) => m.HomeComponent)) },
+      { matcher: homeMatcher, ...page(() => import('./home/home').then((m) => m.HomeComponent)) },
       { path: 'about', data: { slug: 'about' }, ...cms },
       { path: 'association', redirectTo: 'about' },
       { path: 'members', data: { slug: 'members' }, ...cms },

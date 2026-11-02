@@ -7,7 +7,7 @@ Angular 22 application: the public website (server-side rendered, `/fr`, `/ar`, 
 | Command | What it does |
 |---|---|
 | `npm start` | Dev server on http://localhost:4300 with server rendering. Regenerates icons and dictionaries first. Needs the backend: set `API_TARGET` (browser `/api` proxy, see `proxy.conf.mjs`) and `API_ORIGIN` (server-side rendering calls) to the backend URL, and `PUBLIC_BASE_URL` for canonical links |
-| `npx ng test --no-watch` | 353 unit and component tests (Vitest, jsdom); add `--coverage` for the report in `coverage/` (floors are enforced) |
+| `npx ng test --no-watch` | 362 unit and component tests (Vitest, jsdom); add `--coverage` for the report in `coverage/` (floors are enforced) |
 | `npm run build` | Production build into `dist/anagem-frontend` (`browser/` + `server/server.mjs`) |
 | `node dist/anagem-frontend/server/server.mjs` | Run the built server (`PORT`, `API_ORIGIN`, `PUBLIC_BASE_URL`, `ALLOWED_HOSTS`). Behind nginx in Docker (`Dockerfile`) |
 | `npm run i18n` | Merge `i18n-src/*.json` into `public/i18n/{fr,ar,en}.json`; fails if a key is missing in a language |

@@ -30,6 +30,13 @@ describe('PublicShellComponent', () => {
     expect(el().querySelector('a[href="#main"]')).not.toBeNull();
   });
 
+  it('the Home entries of the menu and the footer lead to the bare language address, never to "/ar/" (which showed "Page not found")', async () => {
+    await open('/ar/news');
+    const homeLinks = [...el().querySelectorAll<HTMLAnchorElement>('nav[aria-label="public.mainNav"] a, footer a')].filter((a) => text(a) === 'public.nav.home');
+    expect(homeLinks.length).toBeGreaterThanOrEqual(2); // menu and footer
+    for (const a of homeLinks) expect(a.getAttribute('href')).toBe('/ar');
+  });
+
   it('lists the main sections of the site, in the visitor language', async () => {
     await open('/ar');
     const nav = el().querySelector('nav[aria-label="public.mainNav"]')!;

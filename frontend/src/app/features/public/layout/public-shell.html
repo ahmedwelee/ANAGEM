@@ -60,7 +60,7 @@
                 }
               </ul>
             } @else {
-              <a [routerLink]="['/', lang.lang(), m.path]" routerLinkActive="text-primary after:scale-x-100" [routerLinkActiveOptions]="{ exact: !!m.exact }"
+              <a [routerLink]="m.path ? ['/', lang.lang(), m.path] : ['/', lang.lang()]" routerLinkActive="text-primary after:scale-x-100" [routerLinkActiveOptions]="{ exact: !!m.exact }"
                 class="relative flex min-h-12 items-center px-4 py-3.5 text-sm font-semibold text-ink transition after:absolute after:inset-x-4 after:bottom-0 after:h-[3px] after:origin-left after:scale-x-0 after:rounded-t after:bg-primary after:transition hover:text-primary hover:after:scale-x-100 max-lg:px-1 max-lg:after:hidden rtl:after:origin-right">{{ m.label | transloco }}</a>
             }
           </li>
@@ -92,7 +92,7 @@
       <nav [attr.aria-label]="'public.footerNav' | transloco">
         <h2 class="mb-3 text-xs font-bold tracking-wider text-white uppercase rtl:tracking-normal rtl:text-sm rtl:normal-case">{{ 'public.footerNav' | transloco }}</h2>
         <ul class="space-y-1.5 text-sm">
-          @for (m of menu; track m.label) { <li><a [routerLink]="['/', lang.lang(), m.path]" class="transition hover:text-white hover:underline">{{ m.label | transloco }}</a></li> }
+          @for (m of menu; track m.label) { <li><a [routerLink]="m.path ? ['/', lang.lang(), m.path] : ['/', lang.lang()]" class="transition hover:text-white hover:underline">{{ m.label | transloco }}</a></li> }
         </ul>
       </nav>
       <div>

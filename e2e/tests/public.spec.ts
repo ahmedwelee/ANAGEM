@@ -123,6 +123,29 @@ test.describe('visitor: browsing', () => {
     await expect(page.locator('article')).toContainText('القنيطرة');
   });
 
+  test('"Home" in the menu and the footer leads to the home page from any page, never to "Page not found"', async ({ page }) => {
+    for (const lang of ['ar', 'en']) {
+      for (const from of [`/${lang}/news`, `/${lang}/about`, `/${lang}/events`]) {
+        const homeLinks = (scope: string) => page.locator(`${scope} a[href="/${lang}"]`);
+        for (const scope of ['nav[aria-label] ul', 'footer']) {
+          await page.goto(from);
+          const link = homeLinks(scope).first();
+          await expect(link, `${scope} on ${from}`).toBeVisible();
+          await link.click();
+          await expect(page).toHaveURL(new RegExp(`/${lang}$`));
+          await expect(page.getByRole('heading', { level: 1 }), `home from ${from} via ${scope}`).toBeVisible();
+          await expect(page).not.toHaveTitle(/^404/);
+        }
+      }
+    }
+  });
+
+  test('a home address with a trailing slash shows the home page', async ({ page }) => {
+    await page.goto('/en/');
+    await expect(page).not.toHaveTitle(/^404/);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  });
+
   test('the menu leads to the contact page', async ({ page }) => {
     await page.goto('/en');
     await page.getByRole('link', { name: 'Contact', exact: true }).first().click();
