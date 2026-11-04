@@ -33,7 +33,7 @@ docker compose up -d --build
 | Frontend (public + admin, SSR, proxies `/api`) | `cd frontend && API_TARGET=http://127.0.0.1:8080 API_ORIGIN=http://127.0.0.1:8080 PUBLIC_BASE_URL=http://localhost:4300 npm start` → http://localhost:4300 |
 | **Every test suite** (backend, frontend, browser) with one summary | `scripts/test-all.sh` (`--fast` skips the browser tests) |
 | Backend tests (178, embedded PostgreSQL, no Docker) | `cd backend && ./mvnw verify` |
-| Frontend tests (362, Vitest) | `cd frontend && npx ng test --no-watch` |
+| Frontend tests (376, Vitest) | `cd frontend && npx ng test --no-watch` |
 | End-to-end browser tests (74, Playwright + Chrome, no Docker) | `cd frontend && npm run build && cd ../e2e && npm test` |
 | Production build | `cd frontend && npm run build` |
 
