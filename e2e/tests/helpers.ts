@@ -31,6 +31,8 @@ export function adminApi(request: APIRequestContext, token: string) {
     remove: (kind: string, id: number) => call('delete', `/api/admin/${kind}/${id}`),
     createUser: (email: string, fullName: string, roleName: string, password: string) => call('post', '/api/admin/users', { email, fullName, roleName, password, preferredLocale: 'en' }),
     deleteUser: (id: number) => call('delete', `/api/admin/users/${id}`),
+    role: async (name: string) => ((await (await request.get('/api/admin/roles', { headers })).json()) as { id: number; name: string; permissions: string[] }[]).find((r) => r.name === name)!,
+    setRolePermissions: (roleId: number, permissions: string[]) => call('put', `/api/admin/roles/${roleId}/permissions`, { permissions }),
     settings: (settings: Record<string, unknown>) => call('put', '/api/admin/settings', { settings }),
     get: async (url: string) => (await request.get(url, { headers })).json(),
   };

@@ -1,11 +1,14 @@
 {
   "name": "anagem-morocco-map",
   "private": true,
-  "description": "Generates the outline of Morocco used on the home page from public-domain Natural Earth data. Run: npm install && npm run build",
+  "description": "Generates the twelve-region map of Morocco used on the home page from geoBoundaries (OpenStreetMap, ODbL) data in source/. Run: npm install && npm run build",
   "type": "module",
-  "scripts": { "build": "node build.mjs" },
+  "scripts": {
+    "build": "node build.mjs"
+  },
   "dependencies": {
     "topojson-client": "^3.1.0",
-    "world-atlas": "^2.0.2"
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3"
   }
 }

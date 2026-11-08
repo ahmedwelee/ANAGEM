@@ -36,7 +36,7 @@ Permissions are rows in the database and each role's set can be changed by a sup
 |---|:-:|:-:|:-:|
 | `DASHBOARD_VIEW` | yes | yes | yes |
 | `CONTENT_WRITE` (create/edit; move DRAFT ⇄ PENDING_REVIEW) | yes | yes | yes |
-| `CONTENT_PUBLISH` (publish, schedule, archive, edit live content) | yes | yes | no |
+| `CONTENT_PUBLISH` (publish, schedule, archive, edit live content) | yes | yes | yes |
 | `CONTENT_DELETE` | yes | yes | no |
 | `MEDIA_UPLOAD` | yes | yes | yes |
 | `MEDIA_DELETE` | yes | yes | no |
@@ -49,7 +49,7 @@ Permissions are rows in the database and each role's set can be changed by a sup
 | `ROLE_MANAGE` | yes | no | no |
 | `SETTINGS_MANAGE` | yes | no | no |
 
-Editorial rules on top of the matrix: editors cannot publish, and cannot edit or delete anything that is already live (`PUBLISHED_CONTENT_LOCKED`); the last super administrator cannot be demoted, disabled or deleted; nobody can disable, delete or change the role of their own account.
+Editorial rules on top of the matrix: **editors publish on their own** (migration `V6__editors_publish.sql` gave the `EDITOR` role `CONTENT_PUBLISH`, so no administrator has to approve their content; deleting stays with administrators). A role without `CONTENT_PUBLISH`, which a super administrator can still set up under Users & roles, goes through review: it can only move content between `DRAFT` and `PENDING_REVIEW`, cannot touch anything that is already live (`PUBLISHED_CONTENT_LOCKED`) and gets `PUBLISH_FORBIDDEN` when it tries to publish, schedule or archive; the last super administrator cannot be demoted, disabled or deleted; nobody can disable, delete or change the role of their own account.
 
 ## Security notes
 

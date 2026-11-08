@@ -33,4 +33,31 @@ describe('HomeComponent', () => {
     expect(TestBed.inject(Meta).getTag('name="description"')?.content).toBe('desc fr');
     expect(TestBed.inject(Meta).getTag('property="og:locale"')?.content).toBe('fr_MA');
   });
+
+  it('shows several hero photos one after the other, crossfading, starting with the first', async () => {
+    const ticks: (() => void)[] = [];
+    const timer = vi.spyOn(globalThis, 'setInterval').mockImplementation(((fn: () => void, ms?: number) => { if (ms === 6000) ticks.push(fn); return 0; }) as never);
+    try {
+      (globalThis as { matchMedia?: unknown }).matchMedia ??= () => ({ matches: false });
+      const http = TestBed.inject(HttpTestingController);
+      const fixture = TestBed.createComponent(HomeComponent);
+      await fixture.whenStable();
+      http.expectOne('/api/public/homepage?lang=ar').flush(page('ar', 'عنوان'));
+      await fixture.whenStable();
+      const el = fixture.nativeElement as HTMLElement;
+      const slides = () => [...el.querySelectorAll<HTMLElement>('section .anim-kenburns')].filter((d) => d.style.backgroundImage.includes('/img/')).slice(0, -1); // the last one is the side picture
+      const visible = () => slides().map((d) => !d.classList.contains('opacity-0'));
+      expect(slides().length).toBeGreaterThan(2);
+      expect(visible()).toEqual(slides().map((_, i) => i === 0));
+      expect(ticks).toHaveLength(1); // one timer, every 6 seconds
+      ticks[0]();
+      await fixture.whenStable();
+      expect(visible()).toEqual(slides().map((_, i) => i === 1));
+      for (let i = 1; i < slides().length; i++) ticks[0]();
+      await fixture.whenStable();
+      expect(visible()[0]).toBe(true); // and round again
+    } finally {
+      timer.mockRestore();
+    }
+  });
 });

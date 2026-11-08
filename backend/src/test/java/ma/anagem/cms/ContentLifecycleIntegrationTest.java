@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 
 /** The editorial workflow and CRUD paths shared by every content type: write, review, publish, lock, archive, restore, delete. */
 class ContentLifecycleIntegrationTest extends IntegrationTestBase {
-    String editor, admin;
+    String writer, admin;
 
     @BeforeEach
-    void tokens() throws Exception { editor = tokenFor("EDITOR"); admin = tokenFor("ADMIN"); }
+    void tokens() throws Exception { writer = tokenFor(WRITER); admin = tokenFor("ADMIN"); }
 
     record Kind(String admin, String publicPath, Function<String, Map<String, Object>> body, boolean bySlug, boolean hasPublishEndpoint) {}
 
@@ -45,27 +45,27 @@ class ContentLifecycleIntegrationTest extends IntegrationTestBase {
         for (Kind k : KINDS) {
             String title = unique("Cycle " + k.admin());
             String base = "/api/admin/" + k.admin();
-            JsonNode draft = api(post(base), editor, k.body().apply(title), 201);
+            JsonNode draft = api(post(base), writer, k.body().apply(title), 201);
             long id = draft.path("id").asLong();
             String why = k.admin();
             assertThat(draft.path("status").asText()).as(why).isEqualTo("DRAFT");
             api(get(k.publicPath() + ref(k, draft)), null, null, 404);                       // drafts are private
 
-            api(get(base + "/" + id), editor, null, 200);
+            api(get(base + "/" + id), writer, null, 200);
             Map<String, Object> edited = k.body().apply(title + " modifié");
-            JsonNode updated = api(put(base + "/" + id), editor, edited, 200);
+            JsonNode updated = api(put(base + "/" + id), writer, edited, 200);
             assertThat(updated.path("translations").path("fr").path("title").asText()).as(why).isEqualTo(title + " modifié");
 
-            setStatus(k, id, editor, "PENDING_REVIEW", 200);                                  // writers may ask for a review
-            setStatus(k, id, editor, "PUBLISHED", 403);                                       // but not publish, schedule or archive
-            setStatus(k, id, editor, "ARCHIVED", 403);
-            api(delete(base + "/" + id), editor, null, 403);
+            setStatus(k, id, writer, "PENDING_REVIEW", 200);                                  // writers may ask for a review
+            setStatus(k, id, writer, "PUBLISHED", 403);                                       // but not publish, schedule or archive
+            setStatus(k, id, writer, "ARCHIVED", 403);
+            api(delete(base + "/" + id), writer, null, 403);
 
             setStatus(k, id, admin, "PUBLISHED", 200);
             api(get(k.publicPath() + ref(k, draft)), null, null, 200);                        // now public
-            api(put(base + "/" + id), editor, edited, 403);                                   // live content is locked for editors
-            setStatus(k, id, editor, "DRAFT", 403);
-            api(put(base + "/" + id), admin, edited, 200);                                    // ...but not for administrators
+            api(put(base + "/" + id), writer, edited, 403);                                   // live content is locked for writers
+            setStatus(k, id, writer, "DRAFT", 403);
+            api(put(base + "/" + id), admin, edited, 200);                                    // ...but not for those who may publish
 
             setStatus(k, id, admin, "ARCHIVED", 200);
             api(get(k.publicPath() + ref(k, draft)), null, null, 404);                        // archived content disappears
@@ -79,11 +79,40 @@ class ContentLifecycleIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void editorsPublishScheduleAndCorrectLiveContentWithoutAnAdministrator() throws Exception {
+        String editor = tokenFor("EDITOR");
+        for (Kind k : KINDS) {
+            String title = unique("Éditeur " + k.admin());
+            String base = "/api/admin/" + k.admin();
+            JsonNode item = api(post(base), editor, k.body().apply(title), 201);
+            long id = item.path("id").asLong();
+            api(get(k.publicPath() + ref(k, item)), null, null, 404);                        // a draft is private
+
+            setStatus(k, id, editor, "PUBLISHED", 200);                                       // no review and no administrator in between
+            api(get(k.publicPath() + ref(k, item)), null, null, 200);                         // public straight away
+            api(put(base + "/" + id), editor, k.body().apply(title + " corrigé"), 200);       // and correctable while it is live
+
+            api(patch(base + "/" + id + "/status"), editor, map("status", "SCHEDULED", "publishedAt", Instant.now().plus(2, ChronoUnit.DAYS).toString()), 200);
+            api(get(k.publicPath() + ref(k, item)), null, null, 404);                         // scheduled: not public before its date
+            setStatus(k, id, editor, "ARCHIVED", 200);
+            setStatus(k, id, editor, "DRAFT", 200);                                           // archived content can be restored
+
+            if (k.hasPublishEndpoint()) {
+                long other = api(post(base), editor, k.body().apply(unique("Raccourci éditeur")), 201).path("id").asLong();
+                assertThat(api(patch(base + "/" + other + "/publish"), editor, null, 200).path("status").asText()).as(k.admin()).isEqualTo("PUBLISHED");
+            }
+
+            api(delete(base + "/" + id), editor, null, 403);                                  // deleting is still for administrators
+            api(delete(base + "/" + id), admin, null, 204);
+        }
+    }
+
+    @Test
     void thePublishShortcutIsForPublishersOnly() throws Exception {
         for (Kind k : KINDS) {
             if (!k.hasPublishEndpoint()) continue;
-            long id = api(post("/api/admin/" + k.admin()), editor, k.body().apply(unique("Raccourci")), 201).path("id").asLong();
-            api(patch("/api/admin/" + k.admin() + "/" + id + "/publish"), editor, null, 403);
+            long id = api(post("/api/admin/" + k.admin()), writer, k.body().apply(unique("Raccourci")), 201).path("id").asLong();
+            api(patch("/api/admin/" + k.admin() + "/" + id + "/publish"), writer, null, 403);
             assertThat(api(patch("/api/admin/" + k.admin() + "/" + id + "/publish"), admin, null, 200).path("status").asText()).as(k.admin()).isEqualTo("PUBLISHED");
         }
     }
@@ -201,7 +230,7 @@ class ContentLifecycleIntegrationTest extends IntegrationTestBase {
         for (JsonNode p : api(get("/api/public/categories").param("type", "NEWS"), null, null, 200)) if (p.path("id").asLong() == id) visible = true;
         assertThat(visible).isFalse();
         boolean listed = false;
-        for (JsonNode p : api(get("/api/admin/categories").param("type", "NEWS"), editor, null, 200)) if (p.path("id").asLong() == id) listed = true;
+        for (JsonNode p : api(get("/api/admin/categories").param("type", "NEWS"), writer, null, 200)) if (p.path("id").asLong() == id) listed = true;
         assertThat(listed).as("writers still see inactive categories in the admin").isTrue();
 
         api(delete("/api/admin/categories/" + id), admin, null, 204);
@@ -215,8 +244,8 @@ class ContentLifecycleIntegrationTest extends IntegrationTestBase {
         api(post("/api/admin/resources"), admin, map("kind", "DOCUMENT", "externalUrl", "https://example.org/x", "categoryId", id, "translations", Map.of("fr", Map.of("title", unique("Lié")))), 201);
         for (JsonNode a : api(get("/api/admin/categories").param("type", "RESOURCE"), admin, null, 200)) if (a.path("id").asLong() == id) assertThat(a.path("usageCount").asLong()).isEqualTo(1);
         assertThat(api(delete("/api/admin/categories/" + id), admin, null, 409).path("code").asText()).isEqualTo("CATEGORY_IN_USE");
-        api(put("/api/admin/categories/" + id), editor, map("type", "RESOURCE", "translations", Map.of("fr", Map.of("name", "x"))), 403);
-        api(delete("/api/admin/categories/" + id), editor, null, 403);
+        api(put("/api/admin/categories/" + id), writer, map("type", "RESOURCE", "translations", Map.of("fr", Map.of("name", "x"))), 403);
+        api(delete("/api/admin/categories/" + id), writer, null, 403);
         api(get("/api/admin/categories"), null, null, 401);
     }
 

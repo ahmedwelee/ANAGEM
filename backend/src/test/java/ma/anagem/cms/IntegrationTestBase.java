@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import ma.anagem.cms.entity.Role;
 import ma.anagem.cms.entity.User;
+import ma.anagem.cms.repository.PermissionRepository;
 import ma.anagem.cms.repository.RoleRepository;
 import ma.anagem.cms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +53,21 @@ public abstract class IntegrationTestBase {
     @Autowired protected ObjectMapper json;
     @Autowired protected UserRepository users;
     @Autowired protected RoleRepository roles;
+    @Autowired protected PermissionRepository permissions;
     @Autowired protected PasswordEncoder encoder;
+
+    /** A role that can write but not publish: what the Editor role was before editors could publish. Created on first use, so content goes through review. */
+    public static final String WRITER = "WRITER";
+
+    private Role writerRole() {
+        return roles.findByName(WRITER).orElseGet(() -> {
+            Role r = new Role();
+            r.setName(WRITER);
+            r.setDescription("Test role: writes and submits for review, cannot publish");
+            r.setPermissions(new HashSet<>(permissions.findAllById(List.of("DASHBOARD_VIEW", "CONTENT_WRITE", "MEDIA_UPLOAD"))));
+            return roles.save(r);
+        });
+    }
 
     /** Creates a user with the given role (unique email) and returns a valid bearer token. */
     protected String tokenFor(String role) throws Exception {
@@ -57,7 +75,7 @@ public abstract class IntegrationTestBase {
         User u = new User();
         u.setEmail(email);
         u.setFullName("Test " + role);
-        u.setRole(roles.findByName(role).orElseThrow());
+        u.setRole(role.equals(WRITER) ? writerRole() : roles.findByName(role).orElseThrow());
         u.setPasswordHash(encoder.encode(PASSWORD));
         users.save(u);
         return login(email, PASSWORD).path("accessToken").asText();

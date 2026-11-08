@@ -114,6 +114,7 @@
     <div class="relative border-t border-white/15 bg-black/10">
       <div class="mx-auto flex w-[min(100%-2rem,1240px)] flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4 text-xs">
         <small>© {{ year }} ANAGEM. {{ 'public.rights' | transloco }}</small>
+        <small class="basis-full text-white/70">{{ 'public.mapCredit' | transloco }} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener" class="underline hover:text-white">© OpenStreetMap</a> · <a href="https://www.geoboundaries.org" target="_blank" rel="noopener" class="underline hover:text-white">geoBoundaries</a></small>
         <ul class="flex flex-wrap gap-5">
           <li><a [routerLink]="['/', lang.lang(), 'legal']" class="hover:text-white hover:underline">{{ 'public.legal' | transloco }}</a></li>
           <li><a [routerLink]="['/', lang.lang(), 'privacy']" class="hover:text-white hover:underline">{{ 'public.privacy' | transloco }}</a></li>

@@ -127,9 +127,6 @@
 @keyframes word-in { from { opacity: 0; transform: translateY(.55em); } to { opacity: 1; transform: none; } }
 @keyframes fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 @keyframes kenburns { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.12) translate3d(-1.5%, -1%, 0); } }
-@keyframes map-draw { to { stroke-dashoffset: 0; } }
-@keyframes map-fill { to { fill-opacity: var(--fo, 1); } }
-@keyframes map-ring { from { transform: scale(.4); opacity: .9; } to { transform: scale(2.6); opacity: 0; } }
 @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @keyframes drop-in { from { opacity: 0; transform: translateY(-8px); } }
 
@@ -144,24 +141,19 @@
 @layer components {
   .reveal-js { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); transition-delay: calc(var(--d, 0) * 90ms); }
   .reveal-js.is-in { opacity: 1; transform: none; }
-  .map-land { fill: url(#mapFill); fill-opacity: 0; stroke: var(--c-primary-dark); stroke-width: 2.2; stroke-linejoin: round; stroke-dasharray: 1904; stroke-dashoffset: 1904; }
-  .map-drawn .map-land { animation: map-draw 2.6s cubic-bezier(.65, 0, .35, 1) forwards, map-fill 1.2s ease forwards 1.9s; }
-  .map-mini .map-land { fill: #fff; stroke: #fff; --fo: .22; }
-  .map-hatch { opacity: 0; transition: opacity 1.2s ease 2.4s; pointer-events: none; }
+  /* Regional map of Morocco: the regions appear one after the other. --t (0..3, from the data) tells neighbours apart, --i is the order of appearance. */
+  .map-region { --o: calc(.92 - var(--t, 0) * .17); fill: var(--c-primary); fill-opacity: 0; stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; transition: fill-opacity .8s ease; transition-delay: calc(var(--i, 0) * 110ms); }
+  .map-drawn .map-region { fill-opacity: var(--o); }
+  .map-drawn .map-region:hover { fill-opacity: 1; transition-delay: 0s; }
+  .map-mini .map-region { --o: calc(.12 + var(--t, 0) * .06); fill: #fff; stroke: rgb(255 255 255 / .6); stroke-width: 1.2; }
+  .map-hatch { opacity: 0; transition: opacity 1.2s ease 1.6s; pointer-events: none; }
   .map-drawn .map-hatch { opacity: 1; }
-  .map-city { opacity: 0; transition: opacity .6s ease; transition-delay: calc(2.2s + var(--i, 0) * 110ms); }
-  .map-drawn .map-city, .map-mini .map-city { opacity: 1; }
-  .map-city text { font: 600 17px var(--f-latin); fill: var(--c-primary-dark); paint-order: stroke; stroke: #fff; stroke-width: 4.5px; stroke-linejoin: round; }
-  html[lang="ar"] .map-city text { font-family: var(--f-ar); }
-  .map-city .dot { fill: #fff; stroke: var(--c-primary-dark); stroke-width: 2; }
-  .map-city.hl .dot, .map-mini .map-city .dot { fill: var(--c-accent); stroke: #fff; }
-  .map-ring { fill: none; stroke: var(--c-accent); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: map-ring 2.4s ease-out infinite; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .anim-word, .anim-fade-up { animation: none; opacity: 1; }
   .reveal-js { opacity: 1; transform: none; transition: none; }
-  .map-land { stroke-dashoffset: 0; fill-opacity: var(--fo, 1); animation: none !important; }
-  .map-city, .map-hatch { opacity: 1; transition: none; }
-  .anim-kenburns, .anim-float, .map-ring { animation: none; }
+  .map-region { fill-opacity: var(--o); transition: none; animation: none !important; }
+  .map-hatch { opacity: 1; transition: none; }
+  .anim-kenburns, .anim-float { animation: none; }
 }

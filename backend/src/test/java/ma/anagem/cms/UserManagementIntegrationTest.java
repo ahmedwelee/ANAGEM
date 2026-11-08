@@ -49,7 +49,7 @@ class UserManagementIntegrationTest extends IntegrationTestBase {
         assertThat(created.path("role").asText()).isEqualTo("EDITOR");
         assertThat(created.path("enabled").asBoolean()).isTrue();
         assertThat(created.path("preferredLocale").asText()).isEqualTo("ar");
-        assertThat(created.path("permissions").toString()).contains("CONTENT_WRITE").doesNotContain("CONTENT_PUBLISH");
+        assertThat(created.path("permissions").toString()).contains("CONTENT_WRITE", "CONTENT_PUBLISH").doesNotContain("CONTENT_DELETE", "USER_MANAGE");
 
         JsonNode session = login(created.path("email").asText(), PASSWORD);
         assertThat(session.path("accessToken").asText()).isNotBlank();
@@ -172,6 +172,40 @@ class UserManagementIntegrationTest extends IntegrationTestBase {
         List<String> codes = new ArrayList<>();
         api(get("/api/admin/permissions"), root, null, 200).forEach(p -> codes.add(p.path("code").asText()));
         assertThat(codes).contains("CONTENT_PUBLISH", "USER_MANAGE", "PARTNER_MANAGE").isSorted();
+    }
+
+    @Test
+    void editorsPublishByDefaultAndTheDefaultsOfTheOtherRolesAreUnchanged() throws Exception {
+        Map<String, List<String>> byRole = new LinkedHashMap<>();
+        api(get("/api/admin/roles"), root, null, 200).forEach(r -> {
+            List<String> codes = new ArrayList<>();
+            r.path("permissions").forEach(p -> codes.add(p.asText()));
+            byRole.put(r.path("name").asText(), codes);
+        });
+        assertThat(byRole.get("EDITOR")).containsExactlyInAnyOrder("DASHBOARD_VIEW", "CONTENT_WRITE", "CONTENT_PUBLISH", "MEDIA_UPLOAD");
+        assertThat(byRole.get("ADMIN")).contains("CONTENT_WRITE", "CONTENT_PUBLISH", "CONTENT_DELETE", "PARTNER_MANAGE").doesNotContain("USER_MANAGE", "ROLE_MANAGE", "SETTINGS_MANAGE", "AUDIT_VIEW");
+    }
+
+    @Test
+    void takingThePublishPermissionAwayPutsEditorsBackThroughReviewAtOnce() throws Exception {
+        long editorRole = 0;
+        List<String> original = new ArrayList<>();
+        for (JsonNode r : api(get("/api/admin/roles"), root, null, 200)) {
+            if (r.path("name").asText().equals("EDITOR")) { editorRole = r.path("id").asLong(); r.path("permissions").forEach(p -> original.add(p.asText())); }
+        }
+        String editor = tokenFor("EDITOR");
+        Map<String, Object> body = Map.of("translations", Map.of("fr", Map.of("title", unique("Validation"))));
+        long id = api(post("/api/admin/news"), editor, body, 201).path("id").asLong();
+        try {
+            List<String> withoutPublish = new ArrayList<>(original);
+            withoutPublish.remove("CONTENT_PUBLISH");
+            api(put("/api/admin/roles/" + editorRole + "/permissions"), root, Map.of("permissions", withoutPublish), 200);
+            assertThat(api(patch("/api/admin/news/" + id + "/status"), editor, Map.of("status", "PUBLISHED"), 403).path("code").asText()).isEqualTo("PUBLISH_FORBIDDEN"); // same token, permission gone
+            api(patch("/api/admin/news/" + id + "/status"), editor, Map.of("status", "PENDING_REVIEW"), 200);                      // the review path is back
+        } finally {
+            api(put("/api/admin/roles/" + editorRole + "/permissions"), root, Map.of("permissions", original), 200);
+        }
+        api(patch("/api/admin/news/" + id + "/status"), editor, Map.of("status", "PUBLISHED"), 200);                               // restored: publishes again
     }
 
     @Test

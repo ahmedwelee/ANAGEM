@@ -118,6 +118,15 @@ describe('PublicShellComponent', () => {
     expect(toggles[1].getAttribute('aria-expanded')).toBe('false');
   });
 
+  it('credits the region borders of the map (OpenStreetMap and geoBoundaries) in the footer, as their licence requires', async () => {
+    await open('/ar');
+    const footer = el().querySelector('footer')!;
+    expect(footer.textContent).toContain('public.mapCredit');
+    const links = [...footer.querySelectorAll<HTMLAnchorElement>('a[href^="https://"]')];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(expect.arrayContaining(['https://www.openstreetmap.org/copyright', 'https://www.geoboundaries.org']));
+    for (const a of links.filter((l) => l.getAttribute('href')!.includes('openstreetmap') || l.getAttribute('href')!.includes('geoboundaries'))) expect(a.getAttribute('rel')).toContain('noopener');
+  });
+
   it('shows social links only for the networks the association filled in', async () => {
     await open('/ar', { 'social.linkedin': 'https://www.linkedin.com/company/anagem', 'social.x': 'https://x.com/anagem' });
     const footer = el().querySelector('footer')!;

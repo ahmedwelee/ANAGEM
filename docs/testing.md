@@ -14,9 +14,9 @@ Needs Java 17+, Node 22+ and Google Chrome (or `E2E_CHANNEL=chromium` after `npx
 
 | Level | Where | What it is | Run on its own | Size |
 |---|---|---|---|---|
-| **Backend** | `backend/src/test` | Plain unit tests for the logic (languages, translation fallback, slugs, HTML sanitising, JWT, rate limiting, file signatures, image processing, storage safety, "last super administrator" rules, error mapping) **and** integration tests that boot the whole application on a real PostgreSQL with the real Flyway migrations and the real security filter chain | `cd backend && ./mvnw verify` | 178 tests |
-| **Frontend** | `frontend/src/**/*.spec.ts` | Vitest + Angular `TestBed`: every public page, every admin screen, services, guards, forms. Components are rendered for real; only HTTP is replaced (`HttpTestingController`), so each test states exactly which request the screen must send and how it reacts to each answer | `cd frontend && npx ng test --no-watch` | 376 tests |
-| **End-to-end** | `e2e/tests` | **Playwright driving a real Chrome** against the real thing: Spring Boot (production configuration) on PostgreSQL, the built Angular server (server-side rendering), and an edge proxy with the same routing as nginx | `cd e2e && npm test` (after `npm run build` in `frontend`) | 74 tests |
+| **Backend** | `backend/src/test` | Plain unit tests for the logic (languages, translation fallback, slugs, HTML sanitising, JWT, rate limiting, file signatures, image processing, storage safety, "last super administrator" rules, error mapping) **and** integration tests that boot the whole application on a real PostgreSQL with the real Flyway migrations and the real security filter chain | `cd backend && ./mvnw verify` | 181 tests |
+| **Frontend** | `frontend/src/**/*.spec.ts` | Vitest + Angular `TestBed`: every public page, every admin screen, services, guards, forms. Components are rendered for real; only HTTP is replaced (`HttpTestingController`), so each test states exactly which request the screen must send and how it reacts to each answer | `cd frontend && npx ng test --no-watch` | 383 tests |
+| **End-to-end** | `e2e/tests` | **Playwright driving a real Chrome** against the real thing: Spring Boot (production configuration) on PostgreSQL, the built Angular server (server-side rendering), and an edge proxy with the same routing as nginx | `cd e2e && npm test` (after `npm run build` in `frontend`) | 77 tests |
 
 Coverage is measured and has a floor, so it cannot quietly fall: backend ≥ 90 % of lines (JaCoCo, enforced by `mvn verify`; report in `backend/target/site/jacoco/index.html`), frontend ≥ 78 % statements / 74 % branches / 64 % functions / 80 % lines (enforced by `ng test --coverage`; report in `frontend/coverage/`). Today: backend 96.6 % of lines (73 % of branches), frontend 83 % of lines (81 % statements, 78 % branches).
 
@@ -25,6 +25,7 @@ Coverage is measured and has a floor, so it cannot quietly fall: backend ≥ 90 
 *Visitors* (`public.spec.ts`, `phone.spec.ts`, `edge.spec.ts`)
 - `/` opens in Arabic, right to left, whatever the browser language; a visitor's choice of French or English is remembered; switching language keeps the page and the query.
 - The HTML that leaves the server already contains the article text, the title, canonical address, three language alternates plus `x-default`, Open Graph and JSON-LD; unknown addresses are real `404`s marked `noindex`; `robots.txt` and `sitemap.xml` are right; drafts never reach the sitemap.
+- The home page draws the regional map of Morocco (twelve regions, no city names, region names as tooltips in the visitor's language) and the footer credits its data (OpenStreetMap, geoBoundaries).
 - The real Kénitra event, the About page (nine objectives) and the Members page are served; news can be listed, opened and searched; an article missing in the visitor's language is shown in Arabic first, with a note.
 - Contact form: validation, delivery to the admin inbox, honeypot.
 - Quality: 15 pages load without a JavaScript error, console error or failed request; the first visit needs no API call from the browser (the server already sent the data); one `h1` and a skip link per page; nothing wider than the screen on a phone (Pixel 7), the burger menu works.
@@ -33,7 +34,7 @@ Coverage is measured and has a floor, so it cannot quietly fall: backend ≥ 90 
 *Administrators* (`admin.spec.ts`)
 - Sign-in (wrong password, redirect and return, sign-out); the admin opens in Arabic and switches language.
 - **Write an article in two languages with a picture, publish it, and see it on the English, Arabic and French site**; archive and delete it; leaving a form with unsaved changes asks first.
-- A writer can draft and submit for review but not publish, does not see the administration screens, and is refused by the server too; a super administrator creates an account from the screen and the new person can sign in.
+- **An editor writes, publishes and corrects an article on their own, with no administrator in between**; does not see the administration screens and cannot delete (the server refuses too); when a super administrator takes the publish permission away from editors they go back to "submit for review" and an administrator approves; a super administrator creates an account from the screen and the new person can sign in.
 - Messages from the contact page reach the inbox and are marked read; settings change the public header; maintenance mode replaces the public pages; the audit log shows who did what.
 
 ## How the tests are written

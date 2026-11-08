@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NewsAdmin } from '../../../core/api/models';
 import { ConfirmService } from '../../../core/ui/confirm.service';
 import { ToastService } from '../../../core/ui/toast.service';
-import { ADMIN, EDITOR, fail, respond, routeWith, settle, signIn, text } from '../../../../testing/fixtures';
+import { ADMIN, EDITOR, WRITER, fail, respond, routeWith, settle, signIn, text } from '../../../../testing/fixtures';
 import { provideAppTesting } from '../../../../testing/test-providers';
 import { NewsFormComponent } from './news-form';
 
@@ -174,8 +174,24 @@ describe('NewsFormComponent', () => {
       expect(document.body.textContent).toContain('Aperçu du colloque');
     });
 
-    it('submits for review when the writer is not a publisher, saving pending edits first', async () => {
+    it('lets an editor publish straight away, with no review step, saving pending edits first', async () => {
       await openEditing(EDITOR);
+      type('title-fr', 'Titre à publier');
+      const labels = [...el().querySelectorAll<HTMLButtonElement>('app-status-actions button')].map((b) => text(b));
+      expect(labels.some((l) => l.includes('workflow.submit'))).toBe(false);
+      [...el().querySelectorAll<HTMLButtonElement>('app-status-actions button')].find((b) => text(b).includes('workflow.publishNow'))!.click();
+      await settle(fixture);
+      http.expectOne({ method: 'PUT', url: `${API}/5` }).flush(article({ translations: { fr: { title: 'Titre à publier' } } }));
+      await settle(fixture);
+      const status = http.expectOne({ method: 'PATCH', url: `${API}/5/status` });
+      expect(status.request.body).toEqual({ status: 'PUBLISHED' });
+      status.flush(article({ status: 'PUBLISHED' }));
+      await settle(fixture);
+      expect(el().querySelector('app-status-actions app-status-badge')?.textContent).toContain('PUBLISHED');
+    });
+
+    it('submits for review when the writer is not a publisher, saving pending edits first', async () => {
+      await openEditing(WRITER);
       type('title-fr', 'Titre à relire');
       const submit = [...el().querySelectorAll<HTMLButtonElement>('app-status-actions button')].find((b) => text(b).includes('workflow.submit'))!;
       submit.click();
@@ -191,7 +207,7 @@ describe('NewsFormComponent', () => {
     });
 
     it('does not change the status when saving the pending edits failed', async () => {
-      await openEditing(EDITOR);
+      await openEditing(WRITER);
       type('title-fr', 'Titre');
       [...el().querySelectorAll<HTMLButtonElement>('app-status-actions button')].find((b) => text(b).includes('workflow.submit'))!.click();
       await settle(fixture);
@@ -212,7 +228,7 @@ describe('NewsFormComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/admin/news']);
     });
 
-    it('does not offer delete to a writer', async () => {
+    it('does not offer delete to an editor, who cannot delete content', async () => {
       await openEditing(EDITOR);
       expect([...el().querySelectorAll('app-page-header button')].some((b) => text(b).includes('common.delete'))).toBe(false);
     });

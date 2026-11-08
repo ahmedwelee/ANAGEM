@@ -67,8 +67,11 @@ export function routeWith(opts: { query?: Record<string, string>; data?: Record<
   return { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap, data: opts.data ?? {}, paramMap }, queryParamMap: of(queryParamMap), paramMap: of(paramMap), data: of(opts.data ?? {}) } };
 }
 
-export const EDITOR = ['DASHBOARD_VIEW', 'CONTENT_WRITE', 'MEDIA_UPLOAD'];
-export const ADMIN = [...EDITOR, 'CONTENT_PUBLISH', 'CONTENT_DELETE', 'MEDIA_DELETE', 'CATEGORY_MANAGE', 'HOMEPAGE_MANAGE', 'PARTNER_MANAGE', 'MESSAGES_VIEW'];
+/** A writer who cannot publish (a role a super administrator can still set up): their content goes through review. */
+export const WRITER = ['DASHBOARD_VIEW', 'CONTENT_WRITE', 'MEDIA_UPLOAD'];
+/** The Editor role as delivered: writes and publishes on their own. */
+export const EDITOR = [...WRITER, 'CONTENT_PUBLISH'];
+export const ADMIN = [...EDITOR, 'CONTENT_DELETE', 'MEDIA_DELETE', 'CATEGORY_MANAGE', 'HOMEPAGE_MANAGE', 'PARTNER_MANAGE', 'MESSAGES_VIEW'];
 export const SUPER_ADMIN = [...ADMIN, 'AUDIT_VIEW', 'USER_MANAGE', 'ROLE_MANAGE', 'SETTINGS_MANAGE'];
 
 /** Signs the test session in with the given permissions (no request is made). Call after configureTestingModule. */

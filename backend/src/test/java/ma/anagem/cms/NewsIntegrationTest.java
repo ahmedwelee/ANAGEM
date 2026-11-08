@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 class NewsIntegrationTest extends IntegrationTestBase {
-    String editor, admin;
+    String writer, admin;
 
     @BeforeEach
-    void tokens() throws Exception { editor = tokenFor("EDITOR"); admin = tokenFor("ADMIN"); }
+    void tokens() throws Exception { writer = tokenFor(WRITER); admin = tokenFor("ADMIN"); }
 
     Map<String, Object> text(String title, String summary, String content) {
         Map<String, Object> m = new LinkedHashMap<>();
@@ -45,7 +45,7 @@ class NewsIntegrationTest extends IntegrationTestBase {
     @Test
     void draftIsHiddenUntilAnAdminPublishesIt() throws Exception {
         String title = "Colloque géographie " + UUID.randomUUID().toString().substring(0, 6);
-        JsonNode n = createNews(editor, frOnly(title), 201);
+        JsonNode n = createNews(writer, frOnly(title), 201);
         long id = n.path("id").asLong();
         String slug = n.path("slug").asText();
         assertThat(n.path("status").asText()).isEqualTo("DRAFT");
@@ -54,8 +54,8 @@ class NewsIntegrationTest extends IntegrationTestBase {
         mvc.perform(get("/api/public/news/" + slug)).andExpect(status().isNotFound());
         mvc.perform(get("/api/public/news").param("q", title)).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(0));
 
-        setStatus(editor, id, "PUBLISHED", null, 403);          // editors cannot publish
-        setStatus(editor, id, "PENDING_REVIEW", null, 200);     // but can submit for approval
+        setStatus(writer, id, "PUBLISHED", null, 403);          // a writer without the publish permission cannot publish
+        setStatus(writer, id, "PENDING_REVIEW", null, 200);     // but can submit for review
         setStatus(admin, id, "PUBLISHED", null, 200);
 
         mvc.perform(get("/api/public/news/" + slug)).andExpect(status().isOk()).andExpect(jsonPath("$.title").value(title));
@@ -102,12 +102,12 @@ class NewsIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void liveContentIsLockedForEditorsButNotForAdmins() throws Exception {
+    void liveContentIsLockedForWritersButNotForPublishers() throws Exception {
         long id = createNews(admin, frOnly("Verrouillé " + UUID.randomUUID().toString().substring(0, 6)), 201).path("id").asLong();
         setStatus(admin, id, "PUBLISHED", null, 200);
         String body = json.writeValueAsString(frOnly("Modifié"));
-        mvc.perform(bearer(put("/api/admin/news/" + id).contentType(MediaType.APPLICATION_JSON).content(body), editor)).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("PUBLISHED_CONTENT_LOCKED"));
-        mvc.perform(bearer(delete("/api/admin/news/" + id), editor)).andExpect(status().isForbidden());
+        mvc.perform(bearer(put("/api/admin/news/" + id).contentType(MediaType.APPLICATION_JSON).content(body), writer)).andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("PUBLISHED_CONTENT_LOCKED"));
+        mvc.perform(bearer(delete("/api/admin/news/" + id), writer)).andExpect(status().isForbidden());
         mvc.perform(bearer(put("/api/admin/news/" + id).contentType(MediaType.APPLICATION_JSON).content(body), admin)).andExpect(status().isOk()).andExpect(jsonPath("$.translations.fr.title").value("Modifié"));
         mvc.perform(bearer(delete("/api/admin/news/" + id), admin)).andExpect(status().isNoContent());
     }
@@ -115,7 +115,7 @@ class NewsIntegrationTest extends IntegrationTestBase {
     @Test
     void richTextIsSanitizedOnTheServer() throws Exception {
         String evil = "<p dir=\"rtl\">ok</p><script>alert(1)</script><img src=\"x\" onerror=\"alert(1)\"><a href=\"javascript:alert(1)\">bad</a><a href=\"https://example.org\">good</a><iframe src=\"https://evil.example\"></iframe>";
-        JsonNode n = createNews(editor, Map.of("translations", Map.of("fr", text("XSS " + UUID.randomUUID(), "s", evil))), 201);
+        JsonNode n = createNews(writer, Map.of("translations", Map.of("fr", text("XSS " + UUID.randomUUID(), "s", evil))), 201);
         String stored = n.path("translations").path("fr").path("content").asText();
         assertThat(stored).contains("<p dir=\"rtl\">ok</p>").contains("https://example.org").contains("rel=\"noopener noreferrer\"")
                 .doesNotContain("<script").doesNotContain("onerror").doesNotContain("javascript:").doesNotContain("<iframe");
@@ -123,12 +123,12 @@ class NewsIntegrationTest extends IntegrationTestBase {
 
     @Test
     void invalidInputGivesUsefulErrors() throws Exception {
-        createNews(editor, Map.of("translations", Map.of()), 400);
-        JsonNode e1 = createNews(editor, Map.of("translations", Map.of("fr", text("", "résumé sans titre", null))), 400);
+        createNews(writer, Map.of("translations", Map.of()), 400);
+        JsonNode e1 = createNews(writer, Map.of("translations", Map.of("fr", text("", "résumé sans titre", null))), 400);
         assertThat(e1.path("code").asText()).isEqualTo("TITLE_REQUIRED");
-        JsonNode e2 = createNews(editor, Map.of("translations", Map.of("de", text("Titel", null, null))), 400);
+        JsonNode e2 = createNews(writer, Map.of("translations", Map.of("de", text("Titel", null, null))), 400);
         assertThat(e2.path("code").asText()).isEqualTo("UNSUPPORTED_LOCALE");
-        JsonNode e3 = createNews(editor, Map.of("slug", "Not A Slug!", "translations", Map.of("fr", text("Titre", null, null))), 400);
+        JsonNode e3 = createNews(writer, Map.of("slug", "Not A Slug!", "translations", Map.of("fr", text("Titre", null, null))), 400);
         assertThat(e3.path("fieldErrors").toString()).contains("slug");
     }
 

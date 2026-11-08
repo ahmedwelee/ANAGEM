@@ -12,8 +12,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * Editorial rules shared by news, publications, events and resources.
- * Writers (EDITOR) move content between DRAFT and PENDING_REVIEW; only holders of CONTENT_PUBLISH can make it live,
- * schedule it, archive it, or touch anything that is already live.
+ * Holders of CONTENT_WRITE move content between DRAFT and PENDING_REVIEW; only holders of CONTENT_PUBLISH can make it live,
+ * schedule it, archive it, or touch anything that is already live. Editors, administrators and super administrators hold it by default,
+ * so they publish on their own; a role without it (a super administrator can remove it under Users &amp; roles) goes through review.
  */
 @Component
 public class ContentWorkflow {
@@ -22,7 +23,7 @@ public class ContentWorkflow {
     public void assertEditable(ContentBase c) {
         boolean live = c.getStatus() == ContentStatus.PUBLISHED || c.getStatus() == ContentStatus.SCHEDULED;
         if (live && !CurrentUser.can("CONTENT_PUBLISH")) {
-            throw ApiException.forbidden("PUBLISHED_CONTENT_LOCKED", "Published content can only be edited by an administrator");
+            throw ApiException.forbidden("PUBLISHED_CONTENT_LOCKED", "Published content can only be edited by someone who may publish");
         }
     }
 
@@ -32,7 +33,7 @@ public class ContentWorkflow {
         switch (target) {
             case DRAFT, PENDING_REVIEW -> assertEditable(c);
             case PUBLISHED, SCHEDULED, ARCHIVED -> {
-                if (!publisher) throw ApiException.forbidden("PUBLISH_FORBIDDEN", "Only administrators can publish, schedule or archive content");
+                if (!publisher) throw ApiException.forbidden("PUBLISH_FORBIDDEN", "Only users with the publish permission can publish, schedule or archive content");
             }
         }
         if (target != ContentStatus.DRAFT && !hasTranslation) {

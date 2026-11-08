@@ -16,10 +16,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 class ContentIntegrationTest extends IntegrationTestBase {
-    String editor, admin;
+    String writer, admin;
 
     @BeforeEach
-    void tokens() throws Exception { editor = tokenFor("EDITOR"); admin = tokenFor("ADMIN"); }
+    void tokens() throws Exception { writer = tokenFor(WRITER); admin = tokenFor("ADMIN"); }
 
     JsonNode send(org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder b, String token, Object body, int expected) throws Exception {
         if (body != null) b.contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body));
@@ -37,7 +37,7 @@ class ContentIntegrationTest extends IntegrationTestBase {
     void categoriesAreManagedByAdminsAndProtectedWhileInUse() throws Exception {
         String name = "Colloques " + UUID.randomUUID().toString().substring(0, 6);
         Map<String, Object> body = Map.of("type", "EVENT", "translations", Map.of("fr", Map.of("name", name), "ar", Map.of("name", "ندوات")));
-        send(post("/api/admin/categories"), editor, body, 403);
+        send(post("/api/admin/categories"), writer, body, 403);
         JsonNode c = send(post("/api/admin/categories"), admin, body, 201);
         long id = c.path("id").asLong();
         assertThat(c.path("slug").asText()).startsWith("colloques-");
@@ -56,12 +56,12 @@ class ContentIntegrationTest extends IntegrationTestBase {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("kind", "MAGAZINE_ISSUE"); body.put("year", 2031); body.put("issueNumber", "99"); body.put("pdfFileId", pdf); body.put("coverImageId", cover);
         body.put("translations", Map.of("fr", Map.of("title", "Géographie du Maroc n°99", "description", "<p>Dossier</p>"), "en", Map.of("title", "Geography of Morocco no. 99")));
-        JsonNode p = send(post("/api/admin/publications"), editor, body, 201);
+        JsonNode p = send(post("/api/admin/publications"), writer, body, 201);
         long id = p.path("id").asLong();
 
         mvc.perform(get("/api/public/publications/" + id)).andExpect(status().isNotFound());
         mvc.perform(get("/api/public/publications").param("year", "2031")).andExpect(jsonPath("$.totalElements").value(0));
-        send(patch("/api/admin/publications/" + id + "/status"), editor, Map.of("status", "PUBLISHED"), 403);
+        send(patch("/api/admin/publications/" + id + "/status"), writer, Map.of("status", "PUBLISHED"), 403);
         publish("publications", id);
 
         mvc.perform(get("/api/public/publications").param("year", "2031").param("kind", "MAGAZINE_ISSUE").param("lang", "en"))
@@ -115,10 +115,10 @@ class ContentIntegrationTest extends IntegrationTestBase {
     @Test
     void resourcesNeedAFileOrLinkBeforePublishing() throws Exception {
         String t = "Carte " + UUID.randomUUID().toString().substring(0, 6);
-        JsonNode r = send(post("/api/admin/resources"), editor, Map.of("kind", "MAP", "translations", Map.of("fr", Map.of("title", t))), 201);
+        JsonNode r = send(post("/api/admin/resources"), writer, Map.of("kind", "MAP", "translations", Map.of("fr", Map.of("title", t))), 201);
         long id = r.path("id").asLong();
         assertThat(send(patch("/api/admin/resources/" + id + "/status"), admin, Map.of("status", "PUBLISHED"), 400).path("code").asText()).isEqualTo("RESOURCE_EMPTY");
-        send(put("/api/admin/resources/" + id), editor, Map.of("kind", "MAP", "externalUrl", "https://example.org/map.pdf", "translations", Map.of("fr", Map.of("title", t))), 200);
+        send(put("/api/admin/resources/" + id), writer, Map.of("kind", "MAP", "externalUrl", "https://example.org/map.pdf", "translations", Map.of("fr", Map.of("title", t))), 200);
         publish("resources", id);
         mvc.perform(get("/api/public/resources").param("kind", "MAP").param("q", t)).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.content[0].externalUrl").value("https://example.org/map.pdf"));
     }

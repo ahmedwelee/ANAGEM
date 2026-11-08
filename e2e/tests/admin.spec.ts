@@ -175,11 +175,11 @@ test.describe('admin: publishing an article', () => {
 });
 
 test.describe('admin: roles', () => {
-  test('a writer can draft and ask for a review, but not publish, and does not see the administration screens', async ({ page, request }) => {
+  test('an editor writes and publishes on their own, with no administrator in between, and does not see the administration screens', async ({ page, request }) => {
     const api = adminApi(request, await apiToken(request));
-    const email = `writer-${uid()}@anagem.test`;
-    const password = 'Writer-Passw0rd-123!';
-    const user = await api.createUser(email, 'Writer Test', 'EDITOR', password);
+    const email = `editor-${uid()}@anagem.test`;
+    const password = 'Editor-Passw0rd-123!';
+    const user = await api.createUser(email, 'Editor Test', 'EDITOR', password);
 
     await useAdminLanguage(page);
     await signIn(page, { email, password });
@@ -191,44 +191,92 @@ test.describe('admin: roles', () => {
     await page.goto('/admin/users');
     await expect(page.getByText('Access denied')).toBeVisible();
 
-    const title = `Writer draft ${uid()}`;
+    const title = `Editor article ${uid()}`;
     await page.goto('/admin/news/new');
     await page.locator('#title-en').fill(title);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(toast(page, 'Saved')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Publish now' })).toHaveCount(0);
-    await page.getByRole('button', { name: 'Submit for review' }).click();
+    await expect(page.getByRole('button', { name: 'Submit for review' })).toHaveCount(0); // editors have no review step
+    await page.getByRole('button', { name: 'Publish now' }).click();
     await expect(toast(page, 'Status updated')).toBeVisible();
-    await expect(page.getByText('Pending review', { exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Submit for review' })).toHaveCount(0);
+    await expect(page.getByText('Published', { exact: true }).first()).toBeVisible();
 
-    // The administrator approves it
+    // It is on the public site at once: nobody approved it
     const found = (await api.get(`/api/admin/news?q=${encodeURIComponent(title)}`)).content[0];
-    expect(found.status).toBe('PENDING_REVIEW');
-    await api.publish('news', found.id);
+    expect(found.status).toBe('PUBLISHED');
     expect((await request.get(`/en/news/${found.slug}`)).status()).toBe(200);
 
-    // Now it is live: the writer may no longer change it, and the server says so
+    // The editor may correct it while it is live...
     await page.reload();
-    await page.locator('#title-en').fill(`${title} changed`);
+    await page.locator('#title-en').fill(`${title} corrected`);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await expect(page.locator('app-api-error-banner [role="alert"]')).toBeVisible();
+    await expect(toast(page, 'Saved')).toBeVisible();
+    expect((await request.get(`/en/news/${found.slug}`)).status()).toBe(200);
+    await expect(page.locator('app-api-error-banner [role="alert"]')).toHaveCount(0);
+    // ...but deleting stays with the administrators
+    await expect(page.getByRole('button', { name: 'Delete' })).toHaveCount(0);
 
     await api.remove('news', found.id);
     await api.deleteUser(user.id);
   });
 
-  test('the writer is refused by the server too, not only hidden by the screens', async ({ request }) => {
+  test('a super administrator can take publishing away from editors: they submit for review again, and an administrator approves', async ({ page, request }) => {
     const api = adminApi(request, await apiToken(request));
-    const email = `writer-${uid()}@anagem.test`;
-    const password = 'Writer-Passw0rd-123!';
-    const user = await api.createUser(email, 'Writer Api', 'EDITOR', password);
+    const role = await api.role('EDITOR');
+    expect(role.permissions).toContain('CONTENT_PUBLISH');
+    const email = `reviewed-${uid()}@anagem.test`;
+    const password = 'Reviewed-Passw0rd-123!';
+    const user = await api.createUser(email, 'Reviewed Editor', 'EDITOR', password);
+    try {
+      await api.setRolePermissions(role.id, role.permissions.filter((p) => p !== 'CONTENT_PUBLISH')); // one worker: no other test runs meanwhile
+
+      await useAdminLanguage(page);
+      await signIn(page, { email, password });
+      await expect(page).toHaveURL(/\/admin$/);
+      const title = `Reviewed draft ${uid()}`;
+      await page.goto('/admin/news/new');
+      await page.locator('#title-en').fill(title);
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(toast(page, 'Saved')).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Publish now' })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Submit for review' }).click();
+      await expect(toast(page, 'Status updated')).toBeVisible();
+      await expect(page.getByText('Pending review', { exact: true }).first()).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Submit for review' })).toHaveCount(0);
+
+      // The administrator approves it
+      const found = (await api.get(`/api/admin/news?q=${encodeURIComponent(title)}`)).content[0];
+      expect(found.status).toBe('PENDING_REVIEW');
+      await api.publish('news', found.id);
+      expect((await request.get(`/en/news/${found.slug}`)).status()).toBe(200);
+
+      // Now it is live: this editor may no longer change it, and the server says so
+      await page.reload();
+      await page.locator('#title-en').fill(`${title} changed`);
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect(page.locator('app-api-error-banner [role="alert"]')).toBeVisible();
+
+      await api.remove('news', found.id);
+    } finally {
+      await api.setRolePermissions(role.id, role.permissions); // back to the default: editors publish
+      await api.deleteUser(user.id);
+    }
+  });
+
+  test('the editor is refused by the server too, not only hidden by the screens: no administration, no deleting', async ({ request }) => {
+    const api = adminApi(request, await apiToken(request));
+    const email = `editor-${uid()}@anagem.test`;
+    const password = 'Editor-Passw0rd-123!';
+    const user = await api.createUser(email, 'Editor Api', 'EDITOR', password);
     const token = await apiToken(request, { email, password });
     const headers = { Authorization: `Bearer ${token}` };
     for (const url of ['/api/admin/users', '/api/admin/settings', '/api/admin/audit-logs', '/api/admin/partners', '/api/admin/contact-messages']) {
       expect((await request.get(url, { headers })).status(), url).toBe(403);
     }
     expect((await request.post('/api/admin/categories', { headers, data: { type: 'NEWS', translations: { en: { name: 'x' } } } })).status()).toBe(403);
+    const n = await api.news({ en: `Not for the editor to delete ${uid()}` });
+    expect((await request.delete(`/api/admin/news/${n.id}`, { headers })).status()).toBe(403);
+    await api.remove('news', n.id);
     await api.deleteUser(user.id);
   });
 

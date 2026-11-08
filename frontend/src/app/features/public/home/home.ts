@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, afterNextRender, computed, effect, inject, signal, untracked } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ApiError } from '../../../core/api/models';
@@ -12,6 +12,9 @@ import { MoroccoMapComponent } from '../shared/morocco-map';
 import { RevealDirective } from '../shared/reveal.directive';
 import { imageOf, isExternal, linkTo, mediaUrl, stripHtml } from '../shared/util';
 import { EventDatesPipe, EventDayPipe, EventMonthPipe } from '../shared/event-dates.pipe';
+
+const HERO_PHOTOS = ['/img/village.jpg', '/img/kasbah.jpg', '/img/oasis.jpg', '/img/valley.jpg', '/img/port.jpg'];
+const HERO_SLIDE_MS = 6000;
 
 @Component({
   selector: 'app-home',
@@ -32,10 +35,19 @@ export class HomeComponent {
   protected readonly hero = computed(() => this.data()?.sections['HERO'] ?? null);
   protected readonly words = computed(() => String(this.hero()?.title ?? '').split(/\s+/).filter(Boolean));
   protected readonly heroImage = computed(() => mediaUrl(this.hero()?.heroImageMediaId, '/img/village.jpg'));
+  /** The hero photos, one after the other: the one chosen in the CMS first, then the site's own pictures. */
+  protected readonly heroSlides = computed(() => [this.heroImage(), ...HERO_PHOTOS.filter((p) => p !== this.heroImage())]);
+  protected readonly slide = signal(0);
   protected readonly sideImage = computed(() => mediaUrl(this.hero()?.sideImageMediaId, '/img/beach.jpg'));
   protected readonly firstUpcoming = computed(() => this.data()?.events.find((e) => e.timeStatus !== 'PAST')?.id ?? null);
 
   constructor() {
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const timer = setInterval(() => this.slide.update((i) => (i + 1) % this.heroSlides().length), HERO_SLIDE_MS);
+      destroyRef.onDestroy(() => clearInterval(timer));
+    });
     // Reload when the visitor switches language: the page component stays alive across /fr → /ar
     effect(() => { this.lang.lang(); untracked(() => this.load()); });
   }

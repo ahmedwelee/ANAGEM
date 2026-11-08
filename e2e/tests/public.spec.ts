@@ -37,6 +37,38 @@ test.describe('visitor: language', () => {
   });
 });
 
+test.describe('visitor: the regional map of Morocco', () => {
+  test('the home page draws the twelve regions, with no city name, and names each region as a tooltip in the visitor language', async ({ page }) => {
+    await page.goto('/en');
+    const map = page.locator('app-morocco-map').first();
+    await expect(map.locator('path.map-region')).toHaveCount(12);
+    await expect(map.locator('text')).toHaveCount(0);                      // no names written on the map
+    const names = await map.locator('path.map-region > title').allTextContents();
+    expect(names).toContain('Rabat-Sale-Kenitra');
+    expect(names).toContain('Laayoune-Sakia El Hamra');                    // the southern regions are part of the map
+    expect(names).toContain('Dakhla-Oued Ed-Dahab');
+    expect(new Set(names).size).toBe(12);
+    // The regions fade in; once drawn, the map really has colour (not an empty picture)
+    await expect.poll(async () => Number(await map.locator('path.map-region').first().evaluate((p) => getComputedStyle(p).fillOpacity)), { timeout: 8000 }).toBeGreaterThan(0.3);
+    // The box the picture is drawn in is a sensible size, and the regions fill it
+    const box = (await map.locator('svg').first().boundingBox())!;
+    expect(box.width).toBeGreaterThan(150);
+    expect(box.height).toBeGreaterThan(150);
+
+    await page.goto('/ar');
+    const arabic = await page.locator('app-morocco-map').first().locator('path.map-region > title').allTextContents();
+    expect(arabic).toContain('الرباط - سلا - القنيطرة');
+    expect(arabic).toContain('الداخلة - وادي الذهب');
+  });
+
+  test('the footer credits the region borders (OpenStreetMap and geoBoundaries)', async ({ page }) => {
+    await page.goto('/en');
+    const footer = page.locator('footer');
+    await expect(footer.getByRole('link', { name: '© OpenStreetMap' })).toHaveAttribute('href', 'https://www.openstreetmap.org/copyright');
+    await expect(footer.getByRole('link', { name: 'geoBoundaries' })).toHaveAttribute('href', 'https://www.geoboundaries.org');
+  });
+});
+
 test.describe('visitor: what search engines and link previews see (server-rendered HTML)', () => {
   test('an event page carries its title, canonical address, language alternates, Open Graph and structured data', async ({ request }) => {
     const res = await request.get(`/en/events/${COLLOQUE}`);

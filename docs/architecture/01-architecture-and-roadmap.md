@@ -52,7 +52,7 @@ One Angular 22 application (standalone components, signals, zoneless, Tailwind v
 |---|---|---|
 | 1 Analysis | Read statutes + programme, requirements, open questions | **Done** (`docs/requirements`) |
 | 2 UI design | Tokens, header/footer, homepage, FR/AR/EN + RTL, animation | **Done** as static prototype in `web/` |
-| 3 Backend | Spring Boot, PostgreSQL, Flyway, entities, REST, JWT, file storage | **Done** (`backend/`, 178 tests) |
+| 3 Backend | Spring Boot, PostgreSQL, Flyway, entities, REST, JWT, file storage | **Done** (`backend/`, 181 tests) |
 | 4 Admin dashboard | Dashboard, news/publications/events/resources/media/categories/partners/homepage and pages/settings/users/roles/audit/messages | **Done** (`frontend/src/app/features/admin`) |
 | 5 Public site | Angular SSR, real APIs, all pages, search, SEO, sitemap | **Done** (`frontend/src/app/features/public`) |
 | 6 Testing | Backend, frontend and real-browser end-to-end tests, i18n/RTL/responsive checks | **Done** (`docs/testing.md`), with a manual matrix left for humans (`docs/qa-checklist.md`) |
@@ -63,5 +63,5 @@ One Angular 22 application (standalone components, signals, zoneless, Tailwind v
 - **Members**: no member directory, online membership application or member login. The statutes leave fees and validation to ANAGEM, so the Members page explains categories and how to apply by contact (see open questions).
 - **Backend**: no refresh tokens or password-reset e-mail (an admin resets passwords); rate limiting and lockout counters are in memory (run one backend instance); uploads are not virus-scanned; contact messages are stored, not e-mailed.
 - **Search** is a substring match on titles (plus summary for news and location for events) across news, events and publications: no ranking and no full-text search over article bodies.
-- **Map** in the hero uses real open boundary data (Natural Earth, thinned; `tools/morocco-map`), not ANAGEM's official cartography; photos on the prototype are crops of the programme flyer.
+- **Map** in the hero is the regional map of Morocco (twelve regions, no city names) from real open boundary data (geoBoundaries / OpenStreetMap, ODbL, thinned; `tools/morocco-map`), not ANAGEM's official cartography; photos on the prototype are crops of the programme flyer.
 - **Not verified**: Safari/Firefox, screen reader, Lighthouse scores, load behaviour (see `docs/qa-checklist.md`).
