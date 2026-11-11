@@ -92,3 +92,19 @@ Migrations are forward-only. Back up the database first. Roll back by restoring 
 | Forgot the admin password | Another SUPER_ADMIN resets it (Users → reset password). If none: stop `backend`, delete the user row in `users`, start with `BOOTSTRAP_ADMIN_*` set |
 | Colima / Docker Desktop on macOS: published port unreachable from the host | Recreate the VM (`colima stop && colima start`) or publish another port with `HTTP_PORT` |
 | `port is already allocated` | Change `HTTP_PORT`, `DB_PORT` or `BACKEND_PORT` in `.env` |
+
+## Free server on Oracle Cloud (Always Free) with HTTPS
+
+1. Create an Oracle Cloud account (free tier) and an **Ubuntu 22.04/24.04 ARM (Ampere A1)** instance, shape `VM.Standard.A1.Flex`, 2 OCPU / 12 GB; download the SSH key. In the subnet's security list allow ingress TCP **80** and **443**.
+2. Get a free name at <https://www.duckdns.org> and point it at the instance's public IP.
+3. `ssh -i key ubuntu@<ip>`, then run `deploy/oracle-setup.sh your-name.duckdns.org` (installs Docker, clones the repo, writes `.env` with random secrets, starts everything with HTTPS through Caddy: `deploy/https/`).
+4. Open `https://your-name.duckdns.org`. The admin password is printed at the end and stored in `.env`. Remove `SPRING_PROFILES_ACTIVE=dev` from `.env` for a clean start without demo content.
+
+## Free demo on Render and Neon (no card)
+
+Nothing runs on your computer. Free services sleep after 15 minutes without a visit: the first visit then takes 1–2 minutes.
+
+1. **Neon** (neon.tech, sign in with GitHub): create a project. Copy host, database, user and password from *Connection details*.
+2. **Render** (render.com, sign in with GitHub): *New > Blueprint*, choose the `ANAGEM` repository (`render.yaml`). Fill `DB_URL` (`jdbc:postgresql://<neon-host>/<db>?sslmode=require`), `DB_USER`, `DB_PASSWORD`. Leave the other three blank for now.
+3. When both services exist, set: on `anagem-web` → `API_ORIGIN` = the API service's address and `PUBLIC_BASE_URL` = the web service's own address (both `https://….onrender.com`, no slash at the end); on `anagem-api` → `PUBLIC_BASE_URL` = the web address. Render redeploys.
+4. Open the web address. The admin password is in the API service's *Environment* tab (`BOOTSTRAP_ADMIN_PASSWORD`); the login is `admin@anagem.local`.

@@ -1,0 +1,21 @@
+# Adds automatic HTTPS (Caddy, free Let's Encrypt certificate) in front of the edge.
+# Use together with the main file:  docker compose -f docker-compose.yml -f deploy/https/docker-compose.https.yml up -d --build
+# Needs SITE_DOMAIN in .env (e.g. anagem-demo.duckdns.org) pointing at this server, and ports 80 and 443 open.
+services:
+  edge:
+    ports: !reset []
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - edge
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Set SITE_DOMAIN in .env}
+    volumes:
+      - ./deploy/https/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    ports:
+      - "80:80"
+      - "443:443"
+volumes:
+  caddy_data:

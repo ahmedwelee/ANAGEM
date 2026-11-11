@@ -1,0 +1,46 @@
+# Free demo on Render (+ a free Neon PostgreSQL). Dashboard: New > Blueprint > pick this repository.
+# After the first deploy, set the three values marked "set after" (see docs/deployment.md, "Free demo on Render and Neon").
+services:
+  - type: web
+    name: anagem-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health/liveness
+    envVars:
+      - key: DB_URL            # Neon: jdbc:postgresql://<host>/<db>?sslmode=require
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: BOOTSTRAP_ADMIN_EMAIL
+        value: admin@anagem.local
+      - key: BOOTSTRAP_ADMIN_PASSWORD
+        generateValue: true
+      - key: SPRING_PROFILES_ACTIVE   # dev = placeholder demo content; empty = clean start
+        value: dev
+      - key: JAVA_OPTS               # the free plan has 512 MB
+        value: -XX:MaxRAMPercentage=65 -XX:+UseSerialGC -Xss512k -XX:TieredStopAtLevel=1
+      - key: PUBLIC_BASE_URL         # set after: https://<your-web-service>.onrender.com
+        sync: false
+
+  - type: web
+    name: anagem-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    healthCheckPath: /robots.txt
+    envVars:
+      - key: PROXY_API
+        value: "true"
+      - key: API_ORIGIN              # set after: https://<your-api-service>.onrender.com
+        sync: false
+      - key: PUBLIC_BASE_URL         # set after: https://<your-web-service>.onrender.com
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: "*.onrender.com,localhost"

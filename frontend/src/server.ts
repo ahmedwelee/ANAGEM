@@ -1,5 +1,6 @@
 import { AngularNodeAppEngine, createNodeRequestHandler, isMainModule, writeResponseToNodeResponse } from '@angular/ssr/node';
 import express from 'express';
+import { Readable } from 'node:stream';
 import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -64,6 +65,29 @@ app.get('/sitemap.xml', async (_req, res) => {
   res.type('application/xml').setHeader('Cache-Control', 'public, max-age=900');
   res.send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls.join('')}</urlset>`);
 });
+
+/**
+ * Without an nginx in front (e.g. a free host such as Render), this server forwards the browser's /api calls to the backend itself.
+ * Off by default: the Docker setup routes /api in nginx. Turn on with PROXY_API=true.
+ */
+if (process.env['PROXY_API'] === 'true') {
+  const HOP = new Set(['host', 'connection', 'content-length', 'transfer-encoding', 'keep-alive', 'upgrade']);
+  app.use('/api', async (req, res) => {
+    try {
+      const headers = new Headers();
+      for (const [k, v] of Object.entries(req.headers)) if (!HOP.has(k) && v !== undefined) headers.set(k, Array.isArray(v) ? v.join(', ') : v);
+      headers.set('x-forwarded-for', req.ip ?? '');
+      headers.set('x-forwarded-proto', req.protocol);
+      const hasBody = !['GET', 'HEAD'].includes(req.method);
+      const upstream = await fetch(`${API_ORIGIN}${req.originalUrl}`, { method: req.method, headers, redirect: 'manual', ...(hasBody ? { body: Readable.toWeb(req) as never, duplex: 'half' } : {}) } as RequestInit);
+      res.status(upstream.status);
+      upstream.headers.forEach((v, k) => { if (!['content-encoding', 'content-length', 'transfer-encoding', 'connection'].includes(k)) res.setHeader(k, v); });
+      if (upstream.body) Readable.fromWeb(upstream.body as never).pipe(res); else res.end();
+    } catch {
+      if (!res.headersSent) res.status(502).json({ code: 'BAD_GATEWAY', message: 'The server is not reachable right now. Try again in a minute.' });
+    }
+  });
+}
 
 /** Hashed build assets are immutable; everything else (i18n, icons, favicon) revalidates. */
 app.use(
