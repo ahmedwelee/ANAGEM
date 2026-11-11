@@ -108,3 +108,12 @@ Nothing runs on your computer. Free services sleep after 15 minutes without a vi
 2. **Render** (render.com, sign in with GitHub): *New > Blueprint*, choose the `ANAGEM` repository (`render.yaml`). Fill `DB_URL` (`jdbc:postgresql://<neon-host>/<db>?sslmode=require`), `DB_USER`, `DB_PASSWORD`. Leave the other three blank for now.
 3. When both services exist, set: on `anagem-web` → `API_ORIGIN` = the API service's address and `PUBLIC_BASE_URL` = the web service's own address (both `https://….onrender.com`, no slash at the end); on `anagem-api` → `PUBLIC_BASE_URL` = the web address. Render redeploys.
 4. Open the web address. The admin password is in the API service's *Environment* tab (`BOOTSTRAP_ADMIN_PASSWORD`); the login is `admin@anagem.local`.
+
+## Free demo on Hugging Face Spaces (no card)
+
+One container runs the backend and the website; the database is on Neon. Free Spaces sleep after about 48 hours without a visit and wake in a minute; uploaded files are lost when the Space restarts (they are not stored on Neon).
+
+1. Create a Space at huggingface.co (sign in with Google/GitHub): *Create new Space*, SDK **Docker**, hardware **CPU basic (free)**, visibility Public.
+2. In the Space: *Files > Add file*: add `deploy/huggingface/Dockerfile` as `Dockerfile` and `deploy/huggingface/README.md` as `README.md` (only these two).
+3. *Settings > Variables and secrets*: secrets `DB_URL` (`jdbc:postgresql://<neon-host>/<db>?sslmode=require`), `DB_USER`, `DB_PASSWORD`, `JWT_SECRET` (40+ random characters), `BOOTSTRAP_ADMIN_PASSWORD`; variables `BOOTSTRAP_ADMIN_EMAIL=admin@anagem.local`, `SPRING_PROFILES_ACTIVE=dev`, and `PUBLIC_BASE_URL=https://<owner>-<space>.hf.space`.
+4. The Space builds (about 10 minutes) and then opens at `https://<owner>-<space>.hf.space`.
