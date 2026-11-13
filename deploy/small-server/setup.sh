@@ -70,6 +70,7 @@ fi
 . "$ENVF"
 if [ -n "$DOMAIN" ]; then printf '%s {\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:4000\n}\n' "$DOMAIN" > /etc/Caddyfile
 else printf ':80 {\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:4000\n}\n' > /etc/Caddyfile; fi
+chmod 644 /etc/Caddyfile   # Caddy runs as its own user (the settings file above is root-only on purpose)
 
 echo "== 6/6 services"
 cat > /etc/systemd/system/anagem-api.service <<UNIT
